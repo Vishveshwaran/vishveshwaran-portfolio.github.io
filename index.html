@@ -1,106 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vishveshwaran M - Embedded Systems Engineer</title>
-    <!-- Google Font for the 'terminal' look -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
-    
+    <!-- Google Font: Inter for Bold & Minimal look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Remix Icon -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
     <!-- ===== ALL CSS IS INSIDE THIS <style> TAG ===== -->
     <style>
-        /* ===== Global Styles & "Terminal" Theme ===== */
+        /* ===== Global Styles & Themes ===== */
         :root {
-            --bg-color: #1a1a1a; /* Dark terminal background */
-            --text-color: #e0e0e0; /* Light grey text */
-            --accent-color: #00ff7f; /* Bright "PCB" green */
-            --secondary-color: #444; /* Darker grey for borders */
-            --animation-speed: 0.5s; /* Speed for page transitions - SLOWED DOWN */
+            /* Default Theme: "Terminal" (Green/Dark) */
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --accent-color: #00ff7f;
+            /* Spring Green */
+            --secondary-color: #333;
+            --panel-bg: #1e1e1e;
+            --animation-speed: 0.5s;
+            --font-main: 'Inter', sans-serif;
+            --font-header: 'Inter', sans-serif;
         }
 
-        /* Smooth scrolling for anchor links */
+        /* Theme: "Hardware/Tech" (Cyan/Amber) */
+        [data-theme="tech"] {
+            --bg-color: #0a0f14;
+            /* Deep Blue/Black */
+            --text-color: #d0dfff;
+            --accent-color: #00e5ff;
+            /* Cyan */
+            --secondary-color: #ffb300;
+            /* Amber for contrast */
+            --panel-bg: #111820;
+        }
+
         html {
-            scroll-behavior: smooth;
+            scroll-behavior: auto;
+            /* DISABLE smooth scroll globally to fix JS conflict */
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            font-family: 'Roboto Mono', monospace; /* Monospace "code" font */
+            font-family: var(--font-main);
             margin: 0;
             padding: 0;
-            overflow-x: hidden; /* Prevent horizontal scroll */
-
-            /* NEW: Animated Grid/Blueprint Background */
-            background: 
-                linear-gradient(to bottom, rgba(0, 255, 127, 0.03) 1px, transparent 1px), /* Faint horizontal lines */
-                linear-gradient(to right, rgba(0, 255, 127, 0.03) 1px, transparent 1px), /* Faint vertical lines */
-                radial-gradient(ellipse at center, rgba(40, 40, 40, 1) 0%, var(--bg-color) 100%); /* Vignette */
-            background-size: 25px 25px, 25px 25px, 100% 100%; /* Grid size */
-            animation: pulse-grid 12s infinite alternate ease-in-out;
+            overflow-x: hidden;
+            transition: background-color 0.8s ease, color 0.8s ease;
         }
 
-        /* NEW: Keyframes for the background pulse */
-        @keyframes pulse-grid {
-            from {
-                background-color: #1a1a1a;
-            }
-            to {
-                background-color: #2a2a2a; /* Gently pulse the base color */
-            }
+        /* Dynamic Background Grid */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -1;
+            pointer-events: none;
         }
 
-        h1, h2, h3 {
+        /* Global Oscilloscope Canvas */
+        #oscilloscope-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0;
+            /* Hidden by default */
+            pointer-events: none;
+            transition: opacity 0.8s ease;
+        }
+
+        /* Show Oscilloscope in Tech Theme */
+        body[data-theme="tech"] #oscilloscope-canvas {
+            opacity: 0.15;
+        }
+
+        h1,
+        h2,
+        h3 {
             color: var(--accent-color);
-            font-weight: 700;
+            font-family: var(--font-header);
+            font-weight: 800;
+            letter-spacing: -0.5px;
         }
 
         h2 {
-            font-size: 2rem;
+            font-size: 2.5rem;
             border-bottom: 2px solid var(--secondary-color);
-            padding-bottom: 10px;
+            padding-bottom: 15px;
             margin-bottom: 30px;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
         }
 
-        /* UPDATED: Section is now a full page */
+        p {
+            line-height: 1.8;
+            color: #ccc;
+            font-weight: 300;
+        }
+
+        /* Section Styling */
         section.page {
-            padding: 60px 10%;
-            min-height: 80vh; /* Make each page fill the screen */
-            padding-top: 100px; /* Offset for fixed nav */
+            padding: 40px 10%;
+            min-height: 100vh;
+            padding-top: 110px;
+            /* Fixed Nav Height + Spacing */
+            box-sizing: border-box;
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        section.page.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
         }
 
         a {
             color: var(--accent-color);
             text-decoration: none;
             transition: all 0.3s ease;
+            font-weight: 600;
         }
 
         a:hover {
             text-shadow: 0 0 10px var(--accent-color);
-        }
-
-        /* ===== Canvas Background Style ===== */
-        #matrix-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%; /* Will cover the hero section */
-            z-index: 1; /* Behind hero content */
-            opacity: 0.3; /* Subtle effect */
-        }
-
-        /* ===== PCB Trace Scroll Animation ===== */
-        .pcb-trace {
-            position: fixed;
-            top: 0;
-            left: 20px;
-            width: 2px;
-            background-color: var(--accent-color);
-            height: 0; /* JS will update this height */
-            z-index: 100;
-            box-shadow: 0 0 10px var(--accent-color);
-            transition: height 0.1s linear; /* Smooths the JS update */
         }
 
         /* ===== Navigation ===== */
@@ -112,17 +153,24 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 5%;
-            background-color: rgba(26, 26, 26, 0.8); /* Semi-transparent bg */
+            padding: 15px 5%;
+            background-color: rgba(18, 18, 18, 0.95);
             backdrop-filter: blur(10px);
-            z-index: 99; /* Nav is above canvas */
+            z-index: 1000;
             border-bottom: 1px solid var(--secondary-color);
+            box-sizing: border-box;
+            transition: border-color 0.8s ease;
         }
 
         .nav-logo {
-            font-size: 1.5rem;
-            font-weight: 700;
+            font-size: 1.8rem;
+            font-family: var(--font-header);
             color: var(--accent-color);
+            text-shadow: 0 0 5px var(--accent-color);
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         nav ul {
@@ -139,17 +187,33 @@
         nav ul li a {
             color: var(--text-color);
             font-size: 1rem;
-            cursor: pointer; /* NEW: Show as clickable */
+            cursor: pointer;
+            position: relative;
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        
-        /* NEW: Style for the *active* nav link */
+
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--accent-color);
+            transition: width 0.3s;
+        }
+
+        nav ul li a:hover::after,
+        nav ul li a.active-link::after {
+            width: 100%;
+        }
+
         nav ul li a.active-link {
             color: var(--accent-color);
             font-weight: 700;
-        }
-
-        nav ul li a:hover {
-            color: var(--accent-color);
         }
 
         /* ===== Hero Section ===== */
@@ -158,636 +222,816 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            min-height: 100vh;
-            padding-top: 80px; /* Offset for fixed nav */
-            position: relative; /* Needed for the canvas */
-            overflow: hidden; /* Ensures canvas doesn't spill out */
+            position: relative;
+            overflow: hidden;
+            padding-top: 0;
+        }
+
+        #matrix-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.2;
         }
 
         .hero-content {
-            position: relative; /* Puts content above canvas */
             z-index: 2;
+            background: rgba(18, 18, 18, 0.8);
+            padding: 50px;
+            border: 1px solid var(--accent-color);
+            box-shadow: 0 0 30px rgba(0, 255, 127, 0.15);
+            backdrop-filter: blur(5px);
+            border-radius: 4px;
+            transition: transform 0.3s ease;
+        }
+
+        .hero-content:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 50px rgba(0, 255, 127, 0.25);
         }
 
         .hero-content h1 {
-            font-size: 3rem;
+            font-size: 3.5rem;
             margin-bottom: 10px;
         }
-        
-        /* This CSS is for the typing animation */
-        h1.typing-text {
-            /* Gives space for the subtitle to appear */
-            height: 120px; 
+
+        .typing-text {
+            min-height: 80px;
         }
 
-        .typing-text .cursor {
-            color: var(--accent-color);
-            animation: blink-animation 1s infinite;
+        .cursor {
+            animation: blink 1s infinite;
         }
 
-        .typing-text .subtitle {
-            font-size: 1.5rem;
-            color: var(--text-color);
-            font-weight: 400;
-        }
-        /* End of typing animation CSS */
-
-
-        .hero-content p {
-            font-size: 1.2rem;
-            max-width: 600px;
-            margin-bottom: 30px;
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
         }
 
-        /* "Call to Action" Button Style */
         .cta-button {
-            background-color: var(--accent-color);
-            color: var(--bg-color);
-            padding: 12px 25px;
+            background: transparent;
+            color: var(--accent-color);
+            padding: 15px 35px;
+            font-size: 1.1rem;
             font-weight: 700;
-            border-radius: 4px;
-            font-family: 'Roboto Mono', monospace;
-            border: none;
+            border: 2px solid var(--accent-color);
+            margin-top: 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s;
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--accent-color);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .cta-button:hover::before {
+            left: 0;
         }
 
         .cta-button:hover {
-            background-color: var(--text-color);
-            color: var(--bg-color);
-            text-shadow: none;
+            color: #000;
+            box-shadow: 0 0 30px var(--accent-color);
         }
 
         /* ===== About Section ===== */
         .about-container {
             display: flex;
-            gap: 40px;
-            align-items: flex-start;
-        }
-        .about-text {
-            flex: 2;
-            line-height: 1.8;
-        }
-        .ascii-art-box {
-            flex: 1;
-            background: #222;
-            border: 1px solid var(--secondary-color);
-            padding: 10px;
-            border-radius: 4px;
-        }
-        .ascii-art-box pre {
-            margin: 0;
-            color: var(--accent-color);
+            gap: 50px;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
+        .about-text {
+            flex: 1;
+            font-size: 1.1rem;
+        }
+
+        .about-visual {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .mcu-image {
+            max-width: 100%;
+            border-radius: 10px;
+            border: 2px solid var(--secondary-color);
+            box-shadow: 0 0 30px rgba(0, 229, 255, 0.2);
+            transition: all 0.5s ease;
+        }
+
+        .mcu-image:hover {
+            transform: scale(1.05) rotate(2deg);
+            box-shadow: 0 0 50px rgba(0, 229, 255, 0.4);
+        }
 
         /* ===== Skills Section ===== */
-        .skills-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-        }
-        .skill-category {
-            background: #222;
-            border: 1px solid var(--secondary-color);
-            padding: 25px;
-            border-radius: 4px;
-            transition: all 0.3s ease; /* Added transition */
+        #skills {
+            position: relative;
         }
 
-        /* Added hover effect to match project cards */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .skill-category {
+            background: var(--panel-bg);
+            border: 1px solid var(--secondary-color);
+            padding: 30px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skill-category::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent-color);
+        }
+
         .skill-category:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 255, 127, 0.1);
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
             border-color: var(--accent-color);
         }
 
         .skill-category h3 {
             margin-top: 0;
-            border-bottom: 1px solid var(--accent-color);
-            padding-bottom: 10px;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        .skill-category ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
+
         .skill-category ul li {
-            margin-bottom: 10px;
-            position: relative;
-            padding-left: 20px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            transition: transform 0.2s;
         }
-        /* Simulates a "list" marker */
-        .skill-category ul li::before {
-            content: '>';
-            position: absolute;
-            left: 0;
+
+        .skill-category ul li:hover {
+            transform: translateX(5px);
             color: var(--accent-color);
+        }
+
+        .skill-category ul li i {
+            margin-right: 10px;
+            color: var(--secondary-color);
+            font-size: 1.1rem;
         }
 
         /* ===== Projects Section ===== */
         .project-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 40px;
         }
 
         .project-card {
-            background: #222;
+            background: var(--panel-bg);
             border: 1px solid var(--secondary-color);
-            padding: 25px;
-            border-radius: 4px;
+            border-radius: 12px;
+            position: relative;
+            transition: all 0.4s ease;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
-            transition: all 0.3s ease;
-        }
-
-        /* NEW: Highlight for current internship */
-        .project-card.current-internship {
-            border-color: var(--accent-color);
-            /* Add a subtle pulse animation */
-            animation: pulse-glow 2.5s infinite alternate ease-in-out;
-        }
-
-        /* NEW: Keyframes for the pulse animation */
-        @keyframes pulse-glow {
-            from {
-                box-shadow: 0 0 10px rgba(0, 255, 127, 0.1);
-            }
-            to {
-                box-shadow: 0 0 20px rgba(0, 255, 127, 0.3);
-            }
         }
 
         .project-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 255, 127, 0.1);
             border-color: var(--accent-color);
+            box-shadow: 0 0 30px rgba(0, 229, 255, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .project-image-container {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            border-bottom: 1px solid var(--secondary-color);
+        }
+
+        .project-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .project-card:hover .project-image {
+            transform: scale(1.1);
+        }
+
+        .project-content {
+            padding: 30px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .project-title h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--text-color);
         }
 
         .project-tag {
-            font-size: 0.8rem;
+            background: rgba(0, 229, 255, 0.1);
             color: var(--accent-color);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            border: 1px solid var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .project-details ul {
+            padding-left: 20px;
+            color: #bbb;
+            font-size: 0.95rem;
+        }
+
+        .project-details li {
             margin-bottom: 10px;
         }
 
-        .project-card h3 {
-            margin: 0 0 15px 0;
-            color: var(--text-color);
+        .tech-stack {
+            margin-top: auto;
+            padding-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        .project-card p {
-            font-size: 0.95rem;
-            line-height: 1.6;
-            flex-grow: 1; /* Makes card text take up space */
-        }
-
-        .project-tech {
-            margin: 15px 0;
-        }
-        .project-tech span {
-            background-color: var(--secondary-color);
-            color: var(--text-color);
-            padding: 4px 8px;
+        .tech-badge {
+            background: #2a2a2a;
+            padding: 6px 12px;
             border-radius: 4px;
             font-size: 0.8rem;
-            margin-right: 5px;
-            display: inline-block;
-            margin-bottom: 5px;
+            color: var(--accent-color);
+            border: 1px solid #444;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background 0.3s;
         }
 
-        /* This is the "LED Blink" animation! */
-        .project-link {
-            font-weight: 700;
-            position: relative;
-            padding-left: 20px;
+        .tech-badge:hover {
+            background: rgba(0, 229, 255, 0.1);
+            border-color: var(--accent-color);
         }
 
-        .project-link::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 10px;
-            height: 10px;
-            background-color: var(--accent-color);
-            border-radius: 50%;
-            
-            /* Attach the animation */
-            animation: blink-animation 1.5s infinite;
+        /* ===== Papers Section ===== */
+        .paper-card {
+            background: var(--panel-bg);
+            border-left: 4px solid var(--secondary-color);
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 0 8px 8px 0;
+            transition: transform 0.3s;
         }
 
-        /* Keyframes for the blink animation */
-        @keyframes blink-animation {
-            0% { opacity: 1; box-shadow: 0 0 5px var(--accent-color); }
-            50% { opacity: 0.2; box-shadow: none; }
-            100% { opacity: 1; box-shadow: 0 0 5px var(--accent-color); }
+        .paper-card:hover {
+            transform: translateX(10px);
+            border-left-color: var(--accent-color);
         }
 
         /* ===== Contact Section ===== */
-        #contact {
+        .contact-wrapper {
             text-align: center;
+            padding: 60px;
+            background: var(--panel-bg);
+            border-radius: 12px;
+            border: 1px solid var(--secondary-color);
+            max-width: 800px;
+            margin: 0 auto;
         }
-        .contact-info {
-            margin: 30px 0;
-            font-size: 1.1rem;
+
+        .contact-icons {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 40px;
+            flex-wrap: wrap;
         }
-        .contact-info span {
-            display: block;
-            margin: 10px 0;
+
+        .contact-link-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-color);
+            transition: all 0.3s;
+        }
+
+        .contact-link-item i {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            transition: transform 0.3s;
+        }
+
+        .contact-link-item:hover i {
+            transform: scale(1.2);
+            text-shadow: 0 0 20px var(--accent-color);
+        }
+
+        .contact-link-item:hover {
+            color: var(--accent-color);
         }
 
         /* ===== Footer ===== */
         footer {
             text-align: center;
-            padding: 30px;
-            border-top: 1px solid var(--secondary-color);
+            padding: 40px;
+            color: #666;
             font-size: 0.9rem;
-            color: #888;
+            border-top: 1px solid #222;
         }
-
-        /* ===== NEW: Page Transition System ===== */
-        main {
-            position: relative;
-        }
-
-        .page {
-            display: none; /* Hide all pages by default */
-        }
-
-        .page.active {
-            display: block; /* Show the active page */
-            animation: page-fade-in var(--animation-speed) ease-out forwards;
-        }
-
-        .page.hiding {
-            display: block; /* Keep it visible during animation */
-            animation: page-fade-out var(--animation-speed) ease-out forwards;
-        }
-
-        @keyframes page-fade-in {
-            from {
-                opacity: 0;
-                transform: scale(0.98) translateY(10px); /* UPDATED: "Zoom" in effect */
-            }
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
-        }
-
-        @keyframes page-fade-out {
-            from {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
-            to {
-                opacity: 0;
-                transform: scale(0.98) translateY(-10px); /* UPDATED: "Zoom" out effect */
-            }
-        }
-        
     </style>
 </head>
+
 <body>
 
-    <!-- This is the animated "PCB Trace" that follows your scroll -->
-    <div class="pcb-trace"></div>
-
-    <!-- ===== Navigation Bar ===== -->
+    <!-- Navigation -->
     <nav>
-        <div class="nav-logo">[VM]</div> <!-- Your initials -->
+        <div class="nav-logo"><i class="ri-cpu-line"></i> [VM]</div>
         <ul>
-            <!-- UPDATED: Links now use data-page attribute -->
-            <li><a href="#" data-page="hero" class="active-link">/home</a></li>
-            <li><a href="#" data-page="about">/about</a></li>
-            <li><a href="#" data-page="skills">/skills</a></li>
-            <li><a href="#" data-page="projects">/projects</a></li>
-            <li><a href="#" data-page="contact">/contact</a></li>
+            <li><a href="#" data-page="hero" class="active-link"><i class="ri-home-4-line"></i> /home</a></li>
+            <li><a href="#" data-page="about"><i class="ri-user-3-line"></i> /about</a></li>
+            <li><a href="#" data-page="skills"><i class="ri-code-box-line"></i> /skills</a></li>
+            <li><a href="#" data-page="projects"><i class="ri-lightbulb-flash-line"></i> /projects</a></li>
+            <li><a href="#" data-page="contact"><i class="ri-mail-send-line"></i> /contact</a></li>
         </ul>
     </nav>
 
-    <!-- ===== Main Content Wrapper ===== -->
-    <main>
+    <!-- Global Oscilloscope Canvas (Fixed Background) -->
+    <canvas id="oscilloscope-canvas"></canvas>
 
-        <!-- ===== Hero Section (The "Boot Up") ===== -->
-        <!-- UPDATED: Added 'page' and 'active' classes -->
+    <main>
+        <!-- HERO SECTION -->
         <section id="hero" class="page active">
             <canvas id="matrix-canvas"></canvas>
-            
             <div class="hero-content">
                 <h1 class="typing-text"></h1>
-                <p>A prospective and self-driven Electrical and Electronics Engineer with skills in VLSI, DFT, and Embedded Systems.</p>
-                <a href="#" class="cta-button" data-page-btn="projects">See My Work</a>
+                <p>Electrical & Electronics Engineer | Embedded Systems | VLSI</p>
+                <p style="font-size: 0.9rem; margin-top: 10px; color: #888;">Bridging the gap between Hardware and
+                    Intelligence</p>
+                <button class="cta-button" data-page-btn="projects">Initialize Projects <i
+                        class="ri-arrow-right-line"></i></button>
             </div>
         </section>
 
-        <!-- ===== About Section ===== -->
-        <!-- UPDATED: Added 'page' class -->
+        <!-- ABOUT SECTION -->
         <section id="about" class="page">
-            <h2>/about_me</h2>
+            <h2><i class="ri-user-smile-line"></i> /about_me</h2>
             <div class="about-container">
                 <div class="about-text">
-                    <p>I am an Electrical and Electronics Engineering student (CGPA: 7.62/10) from Amrita Vishwa Vidyapeetham, graduating in 2025. I am passionate about solving problems in the VLSI and Embedded Systems domains. I am comfortable handling responsibility independently or as part of a team, seeking a position to contribute and grow.</p>
+                    <p>
+                        I am a results-driven <strong>Electrical and Electronics Engineering</strong> graduate (2025)
+                        from Amrita Vishwa Vidyapeetham with a strong CGPA of <strong>7.62/10</strong>.
+                    </p>
+                    <p>
+                        My passion lies in the intersection of hardware and software—specifically in <strong>Embedded
+                            Systems, VLSI, and Power Electronics</strong>. I have hands-on experience in designing PCBs,
+                        programming STM32 microcontrollers, and developing AI-driven hardware solutions.
+                    </p>
+                    <p>
+                        Beyond technical skills, I possess strong analytical abilities and a knack for strategic
+                        business growth, having explored technical sales and client acquisition. I am eager to
+                        transition into a dynamic role where I can leverage my technical expertise to solve real-world
+                        problems.
+                    </p>
                 </div>
-                <!-- We can add a simple ASCII art box here for style -->
-                <div class="ascii-art-box">
-<pre>
-  +--------------------------+
-  | VISHVESHWARAN M          |
-  | B.Tech EEE (2021-Present) |
-  | Amrita University        |
-  +--------------------------+
-  | Interests:               |
-  |  > Digital Electronics   |
-  |  > VLSI                  |
-  |  > Embedded Systems      |
-  +--------------------------+
-</pre>
+                <div class="about-visual">
+                    <img src="mcu.png" alt="Futuristic MCU Chip" class="mcu-image">
                 </div>
             </div>
         </section>
 
-        <!-- ===== Skills Section (Schematic Style) ===== -->
-        <!-- UPDATED: Added 'page' class -->
+        <!-- SKILLS SECTION (Tech Theme Starts Here) -->
         <section id="skills" class="page">
-            <h2>/technical_skills</h2>
+            <h2><i class="ri-tools-line"></i> /technical_arsenal</h2>
+
             <div class="skills-grid">
-                
+                <!-- Domains -->
                 <div class="skill-category">
-                    <h3>[ Programming & Scripting ]</h3>
+                    <h3><i class="ri-base-station-line"></i> [ Core Domains ]</h3>
                     <ul>
-                        <li>Verilog</li>
-                        <li>SystemVerilog (basic)</li>
-                        <li>Python</li>
-                        <li>C</li>
+                        <li><i class="ri-cpu-line"></i> Embedded Systems & IoT</li>
+                        <li><i class="ri-microscope-line"></i> VLSI & Digital Logic Design</li>
+                        <li><i class="ri-battery-charge-line"></i> Power Electronics (EV Applications)</li>
+                        <li><i class="ri-layout-2-line"></i> PCB Design & Schematic</li>
                     </ul>
                 </div>
 
+                <!-- Languages -->
                 <div class="skill-category">
-                    <h3>[ Tools & Frameworks ]</h3>
+                    <h3><i class="ri-code-s-slash-line"></i> [ Languages ]</h3>
                     <ul>
-                        <li>Xilinx Vivado</li>
-                        <li>Synopsys Toolchain (Learning)</li>
-                        <li>STM32CubeIDE</li>
-                        <li>MATLAB/Simulink</li>
-                        <li>AUTOSAR</li>
-                        <li>LabView</li>
+                        <li><i class="ri-braces-line"></i> Verilog / SystemVerilog</li>
+                        <li><i class="ri-terminal-box-line"></i> Embedded C / C++</li>
+                        <li><i class="ri-python-line"></i> Python (Data Analysis)</li>
+                        <li><i class="ri-calculator-line"></i> MATLAB</li>
                     </ul>
                 </div>
 
+                <!-- Tools -->
                 <div class="skill-category">
-                    <h3>[ Concepts & Protocols ]</h3>
+                    <h3><i class="ri-hammer-line"></i> [ Tools & Hardware ]</h3>
                     <ul>
-                        <li>Digital Logic Design</li>
-                        <li>I2C</li>
-                        <li>CAN</li>
-                        <li>Scan Chain (intro)</li>
-                        <li>MBIST (intro)</li>
-                        <li>SOC/SOH Estimation</li>
+                        <li><i class="ri-settings-4-line"></i> STM32CubeIDE & Keil</li>
+                        <li><i class="ri-dashboard-line"></i> Xilinx Vivado</li>
+                        <li><i class="ri-artboard-line"></i> Altium / KiCad (PCB)</li>
+                        <li><i class="ri-flask-line"></i> LabView</li>
+                        <li><i class="ri-cpu-fill"></i> FPGA (Basys 3)</li>
+                        <li><i class="ri-sensor-line"></i> STM32 / ESP32 / Arduino</li>
                     </ul>
                 </div>
-
             </div>
         </section>
 
-        <!-- ===== Projects Section ===== -->
-        <!-- UPDATED: Added 'page' class -->
+        <!-- PROJECTS SECTION -->
         <section id="projects" class="page">
-            <h2>/projects</h2>
+            <h2><i class="ri-rocket-line"></i> /projects_&_research</h2>
+
             <div class="project-grid">
 
-                <!-- NEW: Project 1 - Your Lifesigns Internship -->
-                <!-- UPDATED: Added 'current-internship' class -->
-                <div class="project-card current-internship">
-                    <span class="project-tag">Embedded Engineer Intern @ Lifesigns</span>
-                    <h3>AI-Powered Health Monitoring Watch</h3>
-                    <p>Contributed to a wearable health monitor, focusing on schematic design for an STM32-based device. Implemented an on-device Machine Learning model (TinyML) to accurately estimate blood pressure (BP) in real-time using SpO2 sensor data.</p>
-                    <div class="project-tech">
-                        <span>STM32</span>
-                        <span>TinyML</span>
-                        <span>C</span>
-                        <span>Schematic Design</span>
-                        <span>SpO2</span>
-                    </div>
-                    <a href="#" class="project-link">Learn More</a>
-                </div>
-                
-                <!-- Project 2: The STM32 One! -->
+                <!-- Project 1: ADAS -->
                 <div class="project-card">
-                    <span class="project-tag">Embedded - Hardware</span>
-                    <h3>Advanced Driver Assistance System (ADAS)</h3>
-                    <p>Developed an ADAS prototype integrating Adaptive Cruise Control (ACC) and Blind Spot Detection (BSD) using an STM32. The system adjusts speed via obstacle distance and provides alerts, communicating over a CAN bus.</p>
-                    <div class="project-tech">
-                        <span>STM32</span>
-                        <span>CAN</span>
-                        <span>I2C</span>
-                        <span>ADC</span>
+                    <div class="project-image-container">
+                        <img src="project_adas.png" alt="ADAS HUD" class="project-image">
                     </div>
-                    <a href="#" class="project-link">Learn More</a>
-                </div>
-
-                <!-- Project 3: FPGA -->
-                <div class="project-card">
-                    <span class="project-tag">Hardware - FPGA</span>
-                    <h3>UART Communication on BASYS 3 Board</h3>
-                    <p>Designed a complete UART Tx/Rx system in Verilog. Implemented an FSM-based architecture for reliable serial communication and validated real-time data transfer between the FPGA and a PC.</p>
-                    <div class="project-tech">
-                        <span>Verilog</span>
-                        <span>Xilinx Vivado</span>
-                        <span>FSM</span>
-                        <span>FPGA</span>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <div class="project-title">
+                                <h3>ADAS Integration (ACC & BSD)</h3>
+                                <span class="project-tag"><i class="ri-car-line"></i> Hardware / Embedded</span>
+                            </div>
+                        </div>
+                        <div class="project-details">
+                            <p><strong>Mimicking ECU functionalities for Enhanced Road Safety.</strong></p>
+                            <ul>
+                                <li>Led a project on ADAS, integrating <strong>Adaptive Cruise Control (ACC)</strong>
+                                    and <strong>Blind Spot Detection (BSD)</strong>.</li>
+                                <li>Conducted market research on automotive safety trends.</li>
+                                <li>Engaged with industry professionals to communicate technical concepts.</li>
+                            </ul>
+                        </div>
+                        <div class="tech-stack">
+                            <span class="tech-badge"><i class="ri-cpu-line"></i> STM32</span>
+                            <span class="tech-badge"><i class="ri-router-line"></i> CAN Protocol</span>
+                            <span class="tech-badge"><i class="ri-sensor-fill"></i> Sensors</span>
+                            <span class="tech-badge"><i class="ri-code-box-line"></i> C++</span>
+                        </div>
                     </div>
-                    <a href="#" class="project-link">Learn More</a>
                 </div>
 
-                <!-- Project 4: BMS -->
+                <!-- Project 2: BMS -->
                 <div class="project-card">
-                    <span class="project-tag">Hardware - IoT/ML</span>
-                    <h3>Battery Management System (BMS)</h3>
-                    <p>Built a BMS to monitor voltage/temp, detect faults, and estimate SOC/SOH. Used externally trained ML models for fault prediction and an ESP32 for remote IoT monitoring via a cloud app.</p>
-                    <div class="project-tech">
-                        <span>C</span>
-                        <span>Machine Learning</span>
-                        <span>ESP32 (IoT)</span>
-                        <span>SOC/SOH</span>
+                    <div class="project-image-container">
+                        <img src="project_bms.png" alt="BMS Circuit" class="project-image">
                     </div>
-                    <a href="#" class="project-link">Learn More</a>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <div class="project-title">
+                                <h3>BMS with Fault Prediction</h3>
+                                <span class="project-tag"><i class="ri-battery-2-charge-line"></i> Power Electronics /
+                                    AI</span>
+                            </div>
+                        </div>
+                        <div class="project-details">
+                            <p><strong>Battery Management System for Fault Detection and Prediction.</strong></p>
+                            <ul>
+                                <li>Developed an advanced <strong>Battery Management System (BMS)</strong> with
+                                    predictive maintenance.</li>
+                                <li>Demonstrated cost-saving benefits and reliability improvements for EV manufacturers.
+                                </li>
+                                <li>Suggested potential upselling opportunities for <strong>AI-driven fault
+                                        prediction</strong>.</li>
+                            </ul>
+                        </div>
+                        <div class="tech-stack">
+                            <span class="tech-badge"><i class="ri-battery-share-line"></i> BMS</span>
+                            <span class="tech-badge"><i class="ri-brain-line"></i> Machine Learning</span>
+                            <span class="tech-badge"><i class="ri-python-line"></i> Python</span>
+                            <span class="tech-badge"><i class="ri-wifi-line"></i> IoT</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 3: EV Propulsion -->
+                <div class="project-card">
+                    <div class="project-image-container">
+                        <img src="project_ev.png" alt="EV Powertrain" class="project-image">
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <div class="project-title">
+                                <h3>Electric Propulsion System</h3>
+                                <span class="project-tag"><i class="ri-e-bike-2-line"></i> EV / Power Electronics</span>
+                            </div>
+                        </div>
+                        <div class="project-details">
+                            <p><strong>Development of Electric Propulsion system for BLDC Motor.</strong></p>
+                            <ul>
+                                <li>Addressed suboptimal battery technology issues in existing EVs.</li>
+                                <li>Designed a cost-efficient <strong>SIMO (Single Input Multiple Output)
+                                        Converter</strong>.</li>
+                                <li>Implemented source switching mechanisms for optimal performance.</li>
+                            </ul>
+                        </div>
+                        <div class="tech-stack">
+                            <span class="tech-badge"><i class="ri-settings-5-line"></i> BLDC Motor</span>
+                            <span class="tech-badge"><i class="ri-flashlight-line"></i> SIMO Converter</span>
+                            <span class="tech-badge"><i class="ri-functions-line"></i> MATLAB/Simulink</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 4: PMSM Motor -->
+                <div class="project-card">
+                    <div class="project-image-container">
+                        <img src="project_motor.png" alt="PMSM Motor" class="project-image">
+                    </div>
+                    <div class="project-content">
+                        <div class="project-header">
+                            <div class="project-title">
+                                <h3>High Power Density PMSM</h3>
+                                <span class="project-tag"><i class="ri-settings-3-line"></i> Motor Design</span>
+                            </div>
+                        </div>
+                        <div class="project-details">
+                            <p><strong>Development of 5kW/kg PMSM motor for scroll compressors.</strong></p>
+                            <ul>
+                                <li>Focused on developing a PMSM with a power density of <strong>5 kW/kg</strong>.</li>
+                                <li>Targeted applications: Air suspension, braking, HVAC, and auxiliary systems.</li>
+                                <li>Utilized advanced magnets and optimized rotor geometry.</li>
+                            </ul>
+                        </div>
+                        <div class="tech-stack">
+                            <span class="tech-badge"><i class="ri-disc-line"></i> PMSM</span>
+                            <span class="tech-badge"><i class="ri-magnet-line"></i> Magnetics</span>
+                            <span class="tech-badge"><i class="ri-fire-line"></i> Thermal Analysis</span>
+                        </div>
+                    </div>
                 </div>
 
             </div>
+
+            <!-- Papers Section -->
+            <h3 style="margin-top: 60px; border-bottom: 1px solid var(--secondary-color); padding-bottom: 10px;">
+                <i class="ri-article-line"></i> [ Papers Published ]
+            </h3>
+            <div class="paper-card">
+                <h4>Optimal Generation Scheduling in a Microgrid Using Stochastic Optimization Techniques</h4>
+                <p><em>Presented at ICFCR 2024</em></p>
+                <p>Explored generation scheduling using <strong>Particle Swarm Optimization (PSO)</strong> and
+                    <strong>Fuzzy Logic (FL)</strong>. Highlighted Fuzzy Logic's superiority in real-time load balancing
+                    and reducing grid reliance.</p>
+            </div>
+
         </section>
-        
-        <!-- ===== Resume & Contact Section ===== -->
-        <!-- UPDATED: Added 'page' class -->
+
+        <!-- CONTACT SECTION -->
         <section id="contact" class="page">
-            <h2>/contact</h2>
-            <p>I'm actively seeking opportunities. Let's connect.</p>
-            <div class="contact-info">
-                <span>Email: <a href="mailto:vishveshwaran13@gmail.com">vishveshwaran13@gmail.com</a></span>
-                <span>Phone: +91 9345853849</span>
+            <h2><i class="ri-contacts-line"></i> /establish_connection</h2>
+            <div class="contact-wrapper">
+                <p>I am currently available for full-time roles in Embedded Systems, Firmware Development, and Technical
+                    Sales.</p>
+
+                <div class="contact-icons">
+                    <a href="mailto:vishveshwaran13@gmail.com" class="contact-link-item">
+                        <i class="ri-mail-send-fill"></i>
+                        <span>vishveshwaran13@gmail.com</span>
+                    </a>
+                    <a href="tel:+919345853849" class="contact-link-item">
+                        <i class="ri-phone-fill"></i>
+                        <span>+91 9345853849</span>
+                    </a>
+                    <!-- Added placeholders for LinkedIn/GitHub as requested by 'icons' -->
+                    <a href="#" class="contact-link-item">
+                        <i class="ri-linkedin-box-fill"></i>
+                        <span>LinkedIn</span>
+                    </a>
+                    <a href="#" class="contact-link-item">
+                        <i class="ri-github-fill"></i>
+                        <span>GitHub</span>
+                    </a>
+                </div>
+
+                <p style="margin-top: 40px; font-size: 0.9rem; color: #666;">
+                    <i class="ri-map-pin-line"></i> Mayiladuthurai, Tamil Nadu, India
+                </p>
             </div>
         </section>
-    
+
     </main>
 
-    <!-- ===== Footer ===== -->
     <footer>
-        <p>Designed & Built by Vishveshwaran M. // Bootstrapped with help from Gemini.</p>
+        <p>System Status: Online <i class="ri-wifi-line"></i> | Designed by Vishveshwaran M</p>
     </footer>
 
-    <!-- ===== ALL JAVASCRIPT IS INSIDE THIS <script> TAG ===== -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        // Wait for the entire page to load before running animations
-        document.addEventListener('DOMContentLoaded', function() {
-            
-            // --- "PCB Trace" Scroll Animation ---
-            // This code is stable and will not be removed.
-            const trace = document.querySelector('.pcb-trace');
-            if (trace) { // Safety check
-                window.addEventListener('scroll', function() {
-                    const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
-                    if (scrollableHeight > 0) { 
-                        const scrollPercent = (window.scrollY / scrollableHeight) * 100;
-                        trace.style.height = scrollPercent + '%';
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- TYPING ANIMATION ---
+            const text = "Vishveshwaran M";
+            const typingElement = document.querySelector('.typing-text');
+            let i = 0;
+            function typeWriter() {
+                if (i < text.length) {
+                    typingElement.innerHTML = text.substring(0, i + 1) + '<span class="cursor">_</span>';
+                    i++;
+                    setTimeout(typeWriter, 100);
+                }
+            }
+            typeWriter();
+
+            // --- PAGE NAVIGATION & THEME SHIFT ---
+            const navLinks = document.querySelectorAll('nav a[data-page]');
+            const ctaBtn = document.querySelector('.cta-button');
+            const pages = document.querySelectorAll('.page');
+
+            function switchPage(pageId) {
+                // 1. Handle Active Classes
+                pages.forEach(page => {
+                    if (page.id === pageId) {
+                        page.classList.add('active');
+                    } else {
+                        page.classList.remove('active');
                     }
                 });
-            }
 
-
-            // --- "Typing" Animation for Hero Section ---
-            // This code is stable and will not be removed.
-            const typingTextElement = document.querySelector('.typing-text');
-            if (typingTextElement) { // Safety check
-                const textToType = "Vishveshwaran M";
-                const subtitleText = "Electrical & Electronics Engineer";
-                let index = 0;
-                let typingInterval;
-                let cursorInterval;
-
-                function type() {
-                    if (index < textToType.length) {
-                        typingTextElement.innerHTML = textToType.substring(0, index + 1) + '<span class="cursor">|</span>';
-                        index++;
-                        typingInterval = setTimeout(type, 120); // Speed of typing
+                // 2. Handle Nav Links
+                navLinks.forEach(link => {
+                    if (link.getAttribute('data-page') === pageId) {
+                        link.classList.add('active-link');
                     } else {
-                        typingTextElement.innerHTML = textToType + '<span class="cursor">|</span><br><span class="subtitle">' + subtitleText + '</span>';
-                        cursorInterval = setInterval(() => {
-                            const cursor = document.querySelector('.cursor');
-                            if (cursor) {
-                                cursor.style.opacity = (cursor.style.opacity == '0' ? '1' : '0');
-                            }
-                        }, 500);
+                        link.classList.remove('active-link');
                     }
+                });
+
+                // 3. THEME SHIFT LOGIC
+                // If we are in Skills or Projects, switch to "Tech" theme
+                if (pageId === 'skills' || pageId === 'projects') {
+                    document.body.setAttribute('data-theme', 'tech');
+                    startOscilloscope(); // Start tech animation
+                } else {
+                    document.body.removeAttribute('data-theme');
+                    stopOscilloscope(); // Stop tech animation to save resources
                 }
-                type();
+
+                // 4. SCROLL FIX: Force scroll to top immediately
+                window.scrollTo(0, 0);
             }
 
-            
-            // --- "Binary Rain" Canvas Animation ---
-            // This code is stable and will not be removed.
-            const canvas = document.getElementById('matrix-canvas');
-            if (canvas) { // Safety check
-                const ctx = canvas.getContext('2d');
-                const fontSize = 16;
-                let columns = 0;
-                let drops = [];
-
-                function resetCanvas() {
-                    canvas.width = canvas.offsetWidth;
-                    canvas.height = canvas.offsetHeight;
-                    columns = Math.floor(canvas.width / fontSize);
-                    drops = [];
-                    for(let x = 0; x < columns; x++) {
-                        drops[x] = Math.floor(Math.random() * canvas.height / fontSize); 
-                    }
-                }
-                
-                resetCanvas(); 
-
-                const chars = "01"; 
-                
-                function drawMatrix() {
-                    ctx.fillStyle = "rgba(26, 26, 26, 0.05)";
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    ctx.fillStyle = "var(--accent-color)";
-                    ctx.font = fontSize + "px 'Roboto Mono'";
-                    
-                    for(let i = 0; i < drops.length; i++) {
-                        const text = chars[Math.floor(Math.random() * chars.length)];
-                        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                        
-                        if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                            drops[i] = 0;
-                        }
-                        drops[i]++;
-                    }
-                }
-                
-                setInterval(drawMatrix, 50);
-                window.addEventListener('resize', resetCanvas);
-            }
-
-            
-            // --- NEW: SPA Page Navigation Logic ---
-            const navLinks = document.querySelectorAll('nav a[data-page]');
-            const ctaButton = document.querySelector('.cta-button[data-page-btn]');
-            let currentPageId = 'hero'; // Start at hero
-            const animationSpeed = 400; // Must match --animation-speed in CSS
-
-            function navigateTo(nextPageId) {
-                if (nextPageId === currentPageId) return; // Don't reload same page
-
-                const currentPage = document.getElementById(currentPageId);
-                const nextPage = document.getElementById(nextPageId);
-
-                if (currentPage && nextPage) {
-                    // 1. Animate out the current page
-                    currentPage.classList.add('hiding');
-                    
-                    // 2. Update active nav link
-                    document.querySelector('nav a.active-link')?.classList.remove('active-link');
-                    document.querySelector(`nav a[data-page="${nextPageId}"]`)?.classList.add('active-link');
-                    
-                    // 3. Wait for animation, then swap classes
-                    setTimeout(() => {
-                        currentPage.classList.remove('active');
-                        currentPage.classList.remove('hiding');
-
-                        // 4. Show and animate in the new page
-                        nextPage.classList.add('active');
-                        currentPageId = nextPageId;
-                        window.scrollTo(0, 0); // Scroll to top of new page
-                    }, animationSpeed); 
-                }
-            }
-
-            // Listen to all nav links
             navLinks.forEach(link => {
                 link.addEventListener('click', (e) => {
-                    e.preventDefault(); // Stop the '#' from jumping
-                    const pageId = link.getAttribute('data-page');
-                    navigateTo(pageId);
+                    e.preventDefault();
+                    switchPage(link.getAttribute('data-page'));
                 });
             });
 
-            // Listen to the "See My Work" button
-            if (ctaButton) {
-                ctaButton.addEventListener('click', (e) => {
+            if (ctaBtn) {
+                ctaBtn.addEventListener('click', (e) => {
                     e.preventDefault();
-                    const pageId = ctaButton.getAttribute('data-page-btn');
-                    navigateTo(pageId);
+                    switchPage('projects');
                 });
             }
 
-            /* REMOVED: The Intersection Observer ("animate-on-scroll") 
-               is no longer needed, as we are using page transitions.
-            */
+            // --- MATRIX RAIN ANIMATION (Hero) ---
+            const canvas = document.getElementById('matrix-canvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const letters = "01";
+            const fontSize = 14;
+            const columns = canvas.width / fontSize;
+            const drops = Array(Math.floor(columns)).fill(1);
+
+            function drawMatrix() {
+                // Only draw if Hero is active (optimization)
+                if (!document.getElementById('hero').classList.contains('active')) return;
+
+                ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = "#0F0"; // Green
+                ctx.font = fontSize + "px monospace";
+
+                for (let i = 0; i < drops.length; i++) {
+                    const text = letters.charAt(Math.floor(Math.random() * letters.length));
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                    drops[i]++;
+                }
+            }
+            setInterval(drawMatrix, 33);
+
+            // --- OSCILLOSCOPE ANIMATION (Skills) ---
+            const oscCanvas = document.getElementById('oscilloscope-canvas');
+            const oscCtx = oscCanvas.getContext('2d');
+            let oscAnimationId;
+            let time = 0;
+
+            function resizeOsc() {
+                oscCanvas.width = window.innerWidth;
+                oscCanvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeOsc);
+            resizeOsc();
+
+            function drawOscilloscope() {
+                oscCtx.clearRect(0, 0, oscCanvas.width, oscCanvas.height); // Clear canvas
+
+                oscCtx.lineWidth = 2;
+                oscCtx.strokeStyle = '#00e5ff'; // Cyan
+                oscCtx.beginPath();
+
+                const width = oscCanvas.width;
+                const height = oscCanvas.height;
+                const centerY = height / 2;
+
+                for (let x = 0; x < width; x++) {
+                    // Combine sine waves for a "signal" look
+                    const y = centerY +
+                        Math.sin(x * 0.01 + time) * 50 +
+                        Math.sin(x * 0.02 + time * 2) * 25;
+                    if (x === 0) oscCtx.moveTo(x, y);
+                    else oscCtx.lineTo(x, y);
+                }
+                oscCtx.stroke();
+
+                // Second wave (Amber)
+                oscCtx.strokeStyle = '#ffb300';
+                oscCtx.beginPath();
+                for (let x = 0; x < width; x++) {
+                    const y = centerY +
+                        Math.cos(x * 0.015 - time) * 40;
+                    if (x === 0) oscCtx.moveTo(x, y);
+                    else oscCtx.lineTo(x, y);
+                }
+                oscCtx.stroke();
+
+                time += 0.05;
+                oscAnimationId = requestAnimationFrame(drawOscilloscope);
+            }
+
+            function startOscilloscope() {
+                if (!oscAnimationId) {
+                    drawOscilloscope();
+                }
+            }
+
+            function stopOscilloscope() {
+                if (oscAnimationId) {
+                    cancelAnimationFrame(oscAnimationId);
+                    oscAnimationId = null;
+                }
+            }
 
         });
     </script>
 </body>
+
 </html>
-
-
-
