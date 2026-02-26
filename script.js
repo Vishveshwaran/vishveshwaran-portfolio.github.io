@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             draw() {
-                ctx.fillStyle = '#00f3ff';
+                ctx.fillStyle = '#00e676';
                 ctx.beginPath();
                 const currentSize = this.size + Math.sin(this.pulse) * 0.4;
                 ctx.arc(this.x, this.y, Math.max(0.5, currentSize), 0, Math.PI * 2);
@@ -260,8 +260,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     const distance = Math.sqrt(dx * dx + dy * dy);
 
                     if (distance < 130) {
-                        const opacity = 0.12 * (1 - distance / 130);
-                        ctx.strokeStyle = `rgba(0, 243, 255, ${opacity})`;
+                        const opacity = 0.1 * (1 - distance / 130);
+                        ctx.strokeStyle = `rgba(0, 230, 118, ${opacity})`;
                         ctx.lineWidth = 1;
                         ctx.beginPath();
                         ctx.moveTo(nodes[i].x, nodes[i].y);
@@ -297,10 +297,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const centerX = rect.width / 2;
                 const centerY = rect.height / 2;
 
-                const rotateX = ((y - centerY) / centerY) * -6;
-                const rotateY = ((x - centerX) / centerX) * 6;
+                const rotateX = ((y - centerY) / centerY) * -3;
+                const rotateY = ((x - centerX) / centerX) * 3;
 
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.01)`;
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.005)`;
             });
 
             card.addEventListener('mouseleave', () => {
