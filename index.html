@@ -4,24 +4,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vishveshwaran | Embedded Firmware & Design Engineer — Medical Wearables & BLE IoT</title>
+    <title>Vishveshwaran | Embedded Firmware Engineer — Medical Wearables</title>
     <meta name="description"
-        content="Portfolio of Vishveshwaran, an Embedded Firmware & Design Engineer specializing in medical-grade wearables, OLED display drivers, BLE/Wi-Fi connectivity, Zephyr RTOS, OTA/DFU, and TensorFlow Lite on nRF54L15 & STM32 platforms.">
+        content="Portfolio of Vishveshwaran, an Embedded Firmware Engineer specializing in medical-grade wearables, biosignal processing (ECG, SpO₂, respiration), BLE/Wi-Fi connectivity, Zephyr RTOS, OTA/DFU, TensorFlow Lite on nRF54L15 & STM32, and Altium PCB design.">
     <meta name="keywords"
-        content="Embedded Firmware Engineer, Product Development Engineer, BLE, IoT, nRF54L15, STM32, ESP32, Zephyr RTOS, Medical Device, ECG, OLED Display Driver, Capacitive Touch, OTA DFU, TensorFlow Lite, PCB Design, Altium">
+        content="Embedded Firmware Engineer, Product Development Engineer, BLE, IoT, nRF54L15, STM32, STM32WB55, ESP32, Zephyr RTOS, Medical Device, ECG, SpO2, Respiration, BioZ, OTA DFU, MCUboot, TensorFlow Lite, Altium Designer, PCB Design, IEC 62304">
     <meta name="author" content="Vishveshwaran">
 
     <!-- Open Graph -->
-    <meta property="og:title" content="Vishveshwaran | Embedded Firmware & Design Engineer">
+    <meta property="og:title" content="Vishveshwaran | Embedded Firmware Engineer — Medical Wearables">
     <meta property="og:description"
-        content="Building medical-grade firmware, BLE IoT systems, and edge AI solutions on ARM Cortex-M platforms.">
+        content="Building medical-grade wearable firmware — biosignal processing, BLE telemetry, OTA/DFU, and on-device ML on nRF54L15 & STM32 with Zephyr RTOS.">
     <meta property="og:type" content="website">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Inter:wght@300;400;500;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap"
         rel="stylesheet">
 
     <!-- Icons -->
@@ -33,55 +33,65 @@
 
 <body>
 
-    <!-- Custom Resistor Cursor -->
-    <div id="custom-cursor" aria-hidden="true">
-        <svg width="54" height="16" viewBox="0 0 54 16" xmlns="http://www.w3.org/2000/svg">
-            <line x1="0" y1="8" x2="13" y2="8" stroke="#9a9a9a" stroke-width="1.5" stroke-linecap="round"/>
-            <rect class="resistor-body" x="13" y="2.5" width="28" height="11" rx="2.5" fill="#c8a84b"/>
-            <rect x="18" y="2.5" width="3" height="11" fill="#111"/>
-            <rect x="23" y="2.5" width="3" height="11" fill="#00cc66"/>
-            <rect x="28" y="2.5" width="3" height="11" fill="#e05500"/>
-            <rect x="35" y="2.5" width="2.5" height="11" fill="#d4a017"/>
-            <line x1="41" y1="8" x2="54" y2="8" stroke="#9a9a9a" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- ===================== BOOT LOADER ===================== -->
+    <div id="boot-loader" aria-hidden="true">
+        <div class="boot-window">
+            <pre id="boot-text"></pre>
+            <div class="boot-skip">click to skip →</div>
+        </div>
+    </div>
+
+    <!-- ===================== PROBE CURSOR ===================== -->
+    <div id="probe-cursor" aria-hidden="true">
+        <svg width="46" height="46" viewBox="0 0 46 46" xmlns="http://www.w3.org/2000/svg">
+            <!-- needle tip (hotspot at 3,3) -->
+            <polygon class="probe-tip" points="2,2 13,7 7,13" fill="#00E5FF"/>
+            <!-- barrel -->
+            <line class="probe-barrel" x1="10" y1="10" x2="36" y2="36" stroke="#9aa6a2" stroke-width="6"
+                stroke-linecap="round"/>
+            <line class="probe-barrel-core" x1="11" y1="11" x2="35" y2="35" stroke="#0B8A6E" stroke-width="2"
+                stroke-linecap="round"/>
+            <!-- ring accent -->
+            <circle class="probe-ring" cx="30" cy="30" r="6" fill="none" stroke="#C98C2B" stroke-width="1.6"/>
         </svg>
     </div>
 
-    <!-- Atmosphere Layers -->
+    <!-- probe hover readout -->
+    <div id="probe-readout" aria-hidden="true">
+        <svg viewBox="0 0 60 20" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,10 L14,10 L17,3 L20,17 L23,10 L60,10" stroke="#00FF84" stroke-width="1.4" fill="none"/>
+        </svg>
+        <span>SIGNAL DETECTED</span>
+    </div>
+
+    <!-- ===================== ATMOSPHERE ===================== -->
     <div class="scanlines" aria-hidden="true"></div>
     <div class="noise-overlay" aria-hidden="true"></div>
-    <div class="ambient-glow ambient-glow-tl" aria-hidden="true"></div>
-    <div class="ambient-glow ambient-glow-br" aria-hidden="true"></div>
 
-    <!-- ECG Waveform Side Borders -->
-    <div class="ecg-border-left" aria-hidden="true">
-        <svg viewBox="0 0 40 800" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-                d="M20,0 L20,100 L20,110 L15,115 L20,105 L25,140 L20,120 L20,200 L20,210 L15,215 L20,205 L25,240 L20,220 L20,300 L20,310 L15,315 L20,305 L25,340 L20,320 L20,400 L20,410 L15,415 L20,405 L25,440 L20,420 L20,500 L20,510 L15,515 L20,505 L25,540 L20,520 L20,600 L20,610 L15,615 L20,605 L25,640 L20,620 L20,700 L20,710 L15,715 L20,705 L25,740 L20,720 L20,800"
-                stroke="#00e676" stroke-width="1.5" fill="none" opacity="0.2" />
-        </svg>
-    </div>
-    <div class="ecg-border-right" aria-hidden="true">
-        <svg viewBox="0 0 40 800" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-                d="M20,0 L20,100 L20,110 L15,115 L20,105 L25,140 L20,120 L20,200 L20,210 L15,215 L20,205 L25,240 L20,220 L20,300 L20,310 L15,315 L20,305 L25,340 L20,320 L20,400 L20,410 L15,415 L20,405 L25,440 L20,420 L20,500 L20,510 L15,515 L20,505 L25,540 L20,520 L20,600 L20,610 L15,615 L20,605 L25,640 L20,620 L20,700 L20,710 L15,715 L20,705 L25,740 L20,720 L20,800"
-                stroke="#00e676" stroke-width="1.5" fill="none" opacity="0.2" />
-        </svg>
+    <!-- ===================== DEVICE HUD ===================== -->
+    <div class="device-hud" aria-hidden="true">
+        <span class="hud-item"><i class="fas fa-heart-pulse"></i> <span id="hud-bpm">72</span> BPM</span>
+        <span class="hud-item hud-ble"><i class="fab fa-bluetooth-b"></i> LINK</span>
+        <span class="hud-item hud-batt">
+            <span class="batt-shell"><span class="batt-fill" id="batt-fill"></span></span>
+            <span id="batt-pct">100%</span>
+        </span>
     </div>
 
-    <!-- Navigation -->
+    <!-- ===================== NAVIGATION ===================== -->
     <header>
         <div class="container">
             <nav aria-label="Main navigation">
-                <div class="logo">VISHVESHWARAN<span style="color:var(--accent-amber)">.IO</span></div>
+                <div class="logo">VISH<span class="logo-accent">.fw</span></div>
 
                 <ul class="nav-links">
-                    <li><a href="#hero">Home</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#skills">Arsenal</a></li>
-                    <li><a href="#projects">Projects</a></li>
-                    <li><a href="#timeline">Timeline</a></li>
-                    <li><a href="#publications">Publications</a></li>
-                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="#boot" data-sub="Home">BOOT</a></li>
+                    <li><a href="#firmware" data-sub="About">FIRMWARE</a></li>
+                    <li><a href="#hardware" data-sub="Skills">HARDWARE</a></li>
+                    <li><a href="#signals" data-sub="Pipeline">SIGNALS</a></li>
+                    <li><a href="#products" data-sub="Projects">PRODUCTS</a></li>
+                    <li><a href="#lab" data-sub="Experience">LAB</a></li>
+                    <li><a href="#contact" data-sub="Contact">CONTACT</a></li>
                 </ul>
 
                 <div class="nav-controls">
@@ -93,276 +103,224 @@
         </div>
     </header>
 
-    <!-- Mobile Menu Overlay -->
+    <!-- Mobile Menu -->
     <div class="mobile-menu" role="navigation" aria-label="Mobile navigation">
-        <a href="#hero">Home</a>
-        <a href="#about">About</a>
-        <a href="#skills">Arsenal</a>
-        <a href="#projects">Projects</a>
-        <a href="#timeline">Timeline</a>
-        <a href="#publications">Publications</a>
-        <a href="#contact">Contact</a>
+        <a href="#boot">BOOT <small>Home</small></a>
+        <a href="#firmware">FIRMWARE <small>About</small></a>
+        <a href="#hardware">HARDWARE <small>Skills</small></a>
+        <a href="#signals">SIGNALS <small>Pipeline</small></a>
+        <a href="#products">PRODUCTS <small>Projects</small></a>
+        <a href="#lab">LAB <small>Experience</small></a>
+        <a href="#contact">CONTACT <small>Contact</small></a>
     </div>
 
-    <!-- Hero Section -->
-    <section id="hero">
+    <!-- ===================== BOOT / HERO ===================== -->
+    <section id="boot">
         <canvas id="hero-canvas" aria-hidden="true"></canvas>
         <div class="container hero-content reveal">
-            <p class="hero-greeting">Hello, world.</p>
-            <h1>I'm <span class="highlight-name" data-text="Vishveshwaran">Vishveshwaran</span> —<br>an Embedded Firmware & Design Engineer<br>building
-                <span class="highlight-cyan">medical-grade wearables & HMI systems</span>.
-            </h1>
+            <p class="hero-status"><span class="blink-dot"></span> SYSTEM ONLINE · FW v1.0</p>
+            <h1>I'm <span class="highlight-name" data-text="Vishveshwaran">Vishveshwaran</span> —<br>an Embedded
+                Firmware Engineer<br>building <span class="highlight-cyan">medical-grade wearables &amp; biosignal
+                    systems</span>.</h1>
             <div class="typewriter" aria-live="polite"></div>
             <div class="hero-cta">
-                <a href="#projects" class="btn btn-primary">See My Work</a>
-                <a href="#contact" class="btn btn-secondary">Get In Touch</a>
+                <a href="#products" class="btn btn-primary">View Products</a>
+                <a href="#contact" class="btn btn-secondary">Open UART Link</a>
             </div>
         </div>
-        <!-- ECG trace line at bottom of hero -->
-        <div class="ecg-hero-line" aria-hidden="true">
-            <svg viewBox="0 0 1200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                    d="M0,30 L100,30 L110,30 L115,10 L120,50 L125,5 L130,55 L135,25 L140,30 L200,30 L300,30 L310,30 L315,10 L320,50 L325,5 L330,55 L335,25 L340,30 L400,30 L500,30 L510,30 L515,10 L520,50 L525,5 L530,55 L535,25 L540,30 L600,30 L700,30 L710,30 L715,10 L720,50 L725,5 L730,55 L735,25 L740,30 L800,30 L900,30 L910,30 L915,10 L920,50 L925,5 L930,55 L935,25 L940,30 L1000,30 L1100,30 L1110,30 L1115,10 L1120,50 L1125,5 L1130,55 L1135,25 L1140,30 L1200,30"
-                    stroke="#00e676" stroke-width="2" fill="none" />
-            </svg>
+        <div class="scroll-hint" aria-hidden="true">
+            <span>SCROLL TO DESCEND INTO THE DEVICE</span>
+            <i class="fas fa-chevron-down"></i>
         </div>
     </section>
 
-    <!-- Circuit Divider -->
-    <div class="circuit-divider" aria-hidden="true">
-        <svg viewBox="0 0 1200 32" fill="none" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-            <line x1="0" y1="16" x2="510" y2="16" stroke="#00e676" stroke-width="0.8"/>
-            <circle cx="516" cy="16" r="4" stroke="#00e676" stroke-width="1" fill="#060d06"/>
-            <polyline points="528,16 533,7 538,25 543,7 548,25 553,16" stroke="#00e676" stroke-width="1.2" fill="none"/>
-            <circle cx="564" cy="16" r="4" stroke="#00e676" stroke-width="1" fill="#060d06"/>
-            <line x1="90" y1="16" x2="510" y2="16" stroke="#00e676" stroke-width="0.8"/>
-            <line x1="570" y1="16" x2="1200" y2="16" stroke="#00e676" stroke-width="0.8"/>
-        </svg>
-    </div>
+    <!-- flex-cable divider -->
+    <div class="flex-divider" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
 
-    <!-- About Section -->
-    <section id="about" class="reveal">
+    <!-- ===================== FIRMWARE / ABOUT ===================== -->
+    <section id="firmware" class="reveal">
         <div class="container">
-            <h2 class="section-title">About Me</h2>
-            <div class="about-card">
+            <h2 class="section-title"><span class="title-tag">0x01</span> Firmware Layer</h2>
+            <div class="firmware-grid">
                 <div class="about-text">
-                    <p class="about-lead">I design and build firmware for medical-grade wearable devices — from
-                        OLED display drivers and capacitive-touch HMI layers to bare-metal sensor drivers and production BLE protocols.</p>
-                    <p>With hands-on experience across <strong>nRF54L15</strong>, <strong>STM32</strong>, and
-                        <strong>ESP32</strong> platforms, I specialize in the full embedded stack — HMI development
-                        (<strong>SSD1315 OLED</strong>, capacitive-touch input), analog front-end integration
-                        (<strong>ECG via MAX30001</strong>, SpO₂, respiration sensing), and wireless connectivity
-                        (<strong>BLE GATT</strong>, Wi-Fi, OTA/DFU). My work spans schematic design and flex PCB
-                        bring-up to Zephyr RTOS threading and deploying <strong>TensorFlow Lite</strong> models
-                        on-device for real-time BP estimation.
-                    </p>
-                    <p>I've debugged NFC pin locks at the register level, streamed 7 BLE devices concurrently through
-                        a custom gateway, validated BP algorithms against patient monitors, and designed the firmware
-                        architecture for three distinct medical wearable platforms. I thrive at the intersection of
-                        hardware debugging and firmware architecture.</p>
+                    <p class="about-lead">Embedded firmware engineer with one year of professional experience building
+                        medical-grade wearables for continuous physiological monitoring.</p>
+                    <p>Working on <strong>Nordic nRF54L15</strong> with <strong>Zephyr RTOS</strong> and
+                        <strong>STM32</strong>, I own end-to-end firmware for real-time biosignal acquisition
+                        (<strong>ECG, respiration, SpO₂</strong>), on-device signal-quality assessment, and BLE
+                        notification streaming with <strong>OTA/DFU</strong> updates over MCUboot. I've deployed
+                        <strong>TensorFlow Lite</strong> for on-device blood-pressure estimation and prototyped a
+                        dual-MCU BLE-to-Wi-Fi gateway.</p>
+                    <p>On the hardware side, I design schematics and multi-layer PCB layouts in <strong>Altium
+                            Designer</strong> across medical device programs — analog front-end and sensor integration,
+                        power, and connectivity. Comfortable building to <strong>IEC 62304 / FDA 510(k) / CE</strong>
+                        standards.</p>
                     <div class="about-highlights">
                         <div class="about-stat">
-                            <span class="stat-number">2</span>
-                            <span class="stat-label">Research Publications</span>
+                            <span class="stat-number">2</span><span class="stat-label">Publications</span>
                         </div>
                         <div class="about-stat">
-                            <span class="stat-number">4</span>
-                            <span class="stat-label">MCU Platforms Shipped</span>
+                            <span class="stat-number">3</span><span class="stat-label">Device Programs</span>
                         </div>
                         <div class="about-stat">
-                            <span class="stat-number">7</span>
-                            <span class="stat-label">Concurrent BLE Streams</span>
+                            <span class="stat-number">3</span><span class="stat-label">Internships</span>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Fake IDE -->
+                <div class="ide" aria-hidden="true">
+                    <div class="ide-titlebar">
+                        <span class="ide-dot red"></span><span class="ide-dot yellow"></span><span
+                            class="ide-dot green"></span>
+                        <span class="ide-path">~/ezlife-fw/src</span>
+                    </div>
+                    <div class="ide-body">
+                        <div class="ide-tabs" role="tablist">
+                            <button class="ide-tab active" data-file="main.c">main.c</button>
+                            <button class="ide-tab" data-file="ecg.c">ecg.c</button>
+                            <button class="ide-tab" data-file="ble.c">ble.c</button>
+                            <button class="ide-tab" data-file="power.c">power.c</button>
+                        </div>
+                        <pre class="ide-code"><code id="ide-code"></code></pre>
+                        <div class="ide-explain" id="ide-explain"></div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Circuit Divider -->
-    <div class="circuit-divider" aria-hidden="true">
-        <svg viewBox="0 0 1200 32" fill="none" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-            <line x1="0" y1="16" x2="490" y2="16" stroke="#ffd54f" stroke-width="0.8"/>
-            <circle cx="496" cy="16" r="4" stroke="#ffd54f" stroke-width="1" fill="#0a120a"/>
-            <line x1="496" y1="6" x2="496" y2="26" stroke="#ffd54f" stroke-width="1.2"/>
-            <line x1="503" y1="9" x2="503" y2="23" stroke="#ffd54f" stroke-width="1.2"/>
-            <circle cx="510" cy="16" r="4" stroke="#ffd54f" stroke-width="1" fill="#0a120a"/>
-            <line x1="516" y1="16" x2="1200" y2="16" stroke="#ffd54f" stroke-width="0.8"/>
-        </svg>
-    </div>
+    <div class="flex-divider" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
 
-    <!-- Technical Arsenal -->
-    <section id="skills" class="reveal">
+    <!-- ===================== HARDWARE / SKILLS ===================== -->
+    <section id="hardware" class="reveal">
         <div class="container">
-            <h2 class="section-title">Technical Arsenal</h2>
-            <div class="skills-grid">
-                <!-- Firmware & RTOS -->
-                <article class="skill-category">
-                    <h3><i class="fas fa-microchip"></i> Firmware & RTOS</h3>
-                    <div class="skill-list">
-                        <span class="skill-item">Embedded C / C</span>
-                        <span class="skill-item">Python</span>
-                        <span class="skill-item">Zephyr RTOS</span>
-                        <span class="skill-item">ARM Cortex-M</span>
-                        <span class="skill-item">CMSIS-DSP</span>
-                        <span class="skill-item">OTA / DFU</span>
-                        <span class="skill-item">TensorFlow Lite Micro</span>
-                    </div>
-                </article>
-
-                <!-- HMI & Visualization -->
-                <article class="skill-category">
-                    <h3><i class="fas fa-desktop"></i> HMI & Visualization</h3>
-                    <div class="skill-list">
-                        <span class="skill-item">SSD1315 OLED Driver</span>
-                        <span class="skill-item">Capacitive Touch Input</span>
-                        <span class="skill-item">Real-time Data Viz</span>
-                        <span class="skill-item">Python / Flask</span>
-                        <span class="skill-item">Signal Processing</span>
-                        <span class="skill-item">LabVIEW</span>
-                    </div>
-                </article>
-
-                <!-- Platforms & Connectivity -->
-                <article class="skill-category">
-                    <h3><i class="fas fa-broadcast-tower"></i> Platforms & Connectivity</h3>
-                    <div class="skill-list">
-                        <span class="skill-item">nRF54L15 / nRF52</span>
-                        <span class="skill-item">STM32 (WB, L4)</span>
-                        <span class="skill-item">ESP32 / ESP32-S3</span>
-                        <span class="skill-item">BLE GATT / L2CAP</span>
-                        <span class="skill-item">Wi-Fi / MQTT</span>
-                        <span class="skill-item">SPI / I²C / UART</span>
-                    </div>
-                </article>
-
-                <!-- Hardware & Tools -->
-                <article class="skill-category">
-                    <h3><i class="fas fa-bezier-curve"></i> Hardware & Tools</h3>
-                    <div class="skill-list">
-                        <span class="skill-item">Altium Designer</span>
-                        <span class="skill-item">Schematic Design</span>
-                        <span class="skill-item">PCB / Flex PCB</span>
-                        <span class="skill-item">AFE Integration</span>
-                        <span class="skill-item">J-Link / SWD</span>
-                        <span class="skill-item">MATLAB / Simulink</span>
-                    </div>
-                </article>
+            <h2 class="section-title"><span class="title-tag">0x02</span> Hardware Layer</h2>
+            <p class="section-sub">Probe a chip to inspect its capabilities.</p>
+            <div class="hardware-grid">
+                <div class="pcb-board" role="group" aria-label="Interactive skills board">
+                    <div class="pcb-silk">ezLIFE · REV C</div>
+                    <button class="pcb-chip" data-chip="mcu" aria-label="MCU and RTOS skills">
+                        <span class="chip-label">U1</span><span class="chip-name">MCU / RTOS</span>
+                    </button>
+                    <button class="pcb-chip" data-chip="radio" aria-label="Connectivity skills">
+                        <span class="chip-label">U2</span><span class="chip-name">RADIO</span>
+                    </button>
+                    <button class="pcb-chip" data-chip="afe" aria-label="Signal processing skills">
+                        <span class="chip-label">U3</span><span class="chip-name">AFE / DSP</span>
+                    </button>
+                    <button class="pcb-chip" data-chip="tools" aria-label="Hardware tools skills">
+                        <span class="chip-label">U4</span><span class="chip-name">HW / TOOLS</span>
+                    </button>
+                </div>
+                <div class="chip-detail">
+                    <h3 id="chip-title">MCU / RTOS</h3>
+                    <p id="chip-desc" class="chip-desc"></p>
+                    <div class="skill-list" id="chip-skills"></div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Circuit Divider -->
-    <div class="circuit-divider" aria-hidden="true">
-        <svg viewBox="0 0 1200 32" fill="none" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-            <line x1="0" y1="16" x2="505" y2="16" stroke="#00e676" stroke-width="0.8"/>
-            <circle cx="511" cy="16" r="4" stroke="#00e676" stroke-width="1" fill="#060d06"/>
-            <polyline points="523,16 528,7 533,25 538,7 543,25 548,16" stroke="#00e676" stroke-width="1.2" fill="none"/>
-            <circle cx="560" cy="16" r="4" stroke="#00e676" stroke-width="1" fill="#060d06"/>
-            <line x1="566" y1="16" x2="1200" y2="16" stroke="#00e676" stroke-width="0.8"/>
-        </svg>
-    </div>
+    <div class="flex-divider" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
 
-    <!-- Projects -->
-    <section id="projects" class="reveal">
+    <!-- ===================== SIGNALS / PIPELINE ===================== -->
+    <section id="signals" class="reveal">
         <div class="container">
-            <h2 class="section-title">Featured Projects</h2>
+            <h2 class="section-title"><span class="title-tag">0x03</span> Signal Pipeline</h2>
+            <p class="section-sub">A raw ECG lead, processed on-device, streamed to the cloud — live.</p>
+            <div class="scope-panel">
+                <div class="scope-header">
+                    <span>CH1 · ECG LEAD I</span>
+                    <span class="scope-readout"><span id="scope-bpm">72</span> BPM · <span
+                            id="scope-qos">QoS GOOD</span></span>
+                </div>
+                <canvas id="ecg-canvas" aria-hidden="true"></canvas>
+            </div>
+            <div class="pipeline">
+                <div class="pipe-stage" data-stage="0"><i class="fas fa-wave-square"></i><span>Raw ECG</span></div>
+                <div class="pipe-stage" data-stage="1"><i class="fas fa-filter"></i><span>Filter</span></div>
+                <div class="pipe-stage" data-stage="2"><i class="fas fa-mountain"></i><span>Peak Detect</span></div>
+                <div class="pipe-stage" data-stage="3"><i class="fas fa-ruler-horizontal"></i><span>RR Interval</span>
+                </div>
+                <div class="pipe-stage" data-stage="4"><i class="fas fa-heart-pulse"></i><span>Heart Rate</span></div>
+                <div class="pipe-stage" data-stage="5"><i class="fab fa-bluetooth-b"></i><span>BLE Packet</span></div>
+                <div class="pipe-stage" data-stage="6"><i class="fas fa-cloud"></i><span>Cloud</span></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="flex-divider" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+
+    <!-- ===================== PRODUCTS / PROJECTS ===================== -->
+    <section id="products" class="reveal">
+        <div class="container">
+            <h2 class="section-title"><span class="title-tag">0x04</span> Products</h2>
             <div class="projects-grid">
-                <!-- ECG Patch Firmware -->
                 <article class="project-card" data-project="ECG_PATCH">
-                    <div class="project-img-wrapper">
-                        <img src="project_ecg.png"
-                            alt="ECG patch wearable device connected to nRF52 development board with oscilloscope showing ECG waveform"
-                            loading="lazy">
+                    <div class="project-board" aria-hidden="true">
+                        <span class="pb-chip"></span><span class="pb-trace"></span><span class="pb-trace t2"></span>
                     </div>
                     <div class="project-info">
-                        <h3>ECG Patch Firmware</h3>
-                        <p>Medical-grade wearable ECG with real-time BLE streaming, fall detection, and
-                            threading-optimized firmware on nRF52DK.</p>
-                        <div class="tech-stack">
-                            <span class="tech-badge">nRF52</span>
-                            <span class="tech-badge">MAX30001</span>
-                            <span class="tech-badge">Zephyr</span>
-                            <span class="tech-badge">BLE GATT</span>
-                        </div>
-                    </div>
-                </article>
-
-                <!-- BLE Gateway System -->
-                <article class="project-card" data-project="BLE_GATEWAY">
-                    <div class="project-img-wrapper">
-                        <img src="project_gateway.png"
-                            alt="BLE gateway setup with ESP32-S3 and nRF54DK streaming data from multiple ECG belt devices to Flask dashboard"
-                            loading="lazy">
-                    </div>
-                    <div class="project-info">
-                        <h3>BLE Multi-Device Gateway</h3>
-                        <p>Concurrent BLE gateway streaming 7 medical devices simultaneously via nRF54DK + ESP32S3 with
-                            real-time Flask dashboard.</p>
-                        <div class="tech-stack">
-                            <span class="tech-badge">nRF54DK</span>
-                            <span class="tech-badge">ESP32-S3</span>
-                            <span class="tech-badge">MQTT</span>
-                            <span class="tech-badge">Flask</span>
-                        </div>
-                    </div>
-                </article>
-
-                <!-- NISO Smart Watch -->
-                <article class="project-card" data-project="NISO_WATCH">
-                    <div class="project-img-wrapper">
-                        <img src="project_niso.png"
-                            alt="NISO medical smartwatch with OLED display showing SpO2 and blood pressure readings alongside SpO2 probe"
-                            loading="lazy">
-                    </div>
-                    <div class="project-info">
-                        <h3>NISO Medical Watch</h3>
-                        <p>STM32-based smartwatch with on-device ML for blood pressure estimation, SpO2 monitoring, and
-                            CMSIS-DSP signal processing.</p>
-                        <div class="tech-stack">
-                            <span class="tech-badge">STM32</span>
-                            <span class="tech-badge">TFLite</span>
-                            <span class="tech-badge">CMSIS-DSP</span>
-                            <span class="tech-badge">SpO2</span>
-                        </div>
-                    </div>
-                </article>
-
-                <!-- Flex / Temperature Patch -->
-                <article class="project-card" data-project="TEMP_PATCH">
-                    <div class="project-img-wrapper">
-                        <img src="project_temppatch.png"
-                            alt="Flex PCB temperature patch with LIS2DUX12 accelerometer and thermistor connected to nRF54L15 module"
-                            loading="lazy">
-                    </div>
-                    <div class="project-info">
-                        <h3>Flex Temperature Patch</h3>
-                        <p>Ultra-low-power flex PCB patch with modular sensor abstraction, 3.3V rail migration, and BLE
-                            advertising on nRF54L15U.</p>
+                        <h3>ezLife — Continuous ECG Monitoring Patch</h3>
+                        <p>Core device firmware on Zephyr RTOS with a multithreaded producer/consumer architecture and
+                            lock-free ring buffer for gap-free ECG streaming over BLE at clinical sample rates.</p>
                         <div class="tech-stack">
                             <span class="tech-badge">nRF54L15</span>
-                            <span class="tech-badge">LIS2DUX12</span>
-                            <span class="tech-badge">Flex PCB</span>
-                            <span class="tech-badge">Altium</span>
+                            <span class="tech-badge">Zephyr RTOS</span>
+                            <span class="tech-badge">BLE GATT</span>
+                            <span class="tech-badge">OTA/DFU</span>
+                            <span class="tech-badge">MCUboot</span>
                         </div>
                     </div>
                 </article>
 
-                <!-- Battery Management System -->
-                <article class="project-card" data-project="BMS">
-                    <div class="project-img-wrapper">
-                        <img src="project_bms.png"
-                            alt="Battery Management System with IoT dashboard showing real-time SOC/SOH estimation and fault detection"
-                            loading="lazy">
+                <article class="project-card" data-project="NISO_WATCH">
+                    <div class="project-board" aria-hidden="true">
+                        <span class="pb-chip"></span><span class="pb-trace"></span><span class="pb-trace t2"></span>
                     </div>
                     <div class="project-info">
-                        <h3>Battery Management System</h3>
-                        <p>Real-time BMS with SOC/SOH estimation, ML-based fault prediction, and IoT remote-monitoring
-                            dashboards on ESP32.</p>
+                        <h3>STM32WB55 Health Watch — BP Estimation</h3>
+                        <p>Cross-team port of a blood-pressure estimation algorithm to TensorFlow Lite for on-device
+                            inference on STM32WB55, with SpO₂ acquisition and BLE/Wi-Fi telemetry via ESP32.</p>
+                        <div class="tech-stack">
+                            <span class="tech-badge">STM32WB55</span>
+                            <span class="tech-badge">TFLite</span>
+                            <span class="tech-badge">SpO₂</span>
+                            <span class="tech-badge">ESP32</span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="project-card" data-project="BLE_GATEWAY">
+                    <div class="project-board" aria-hidden="true">
+                        <span class="pb-chip"></span><span class="pb-trace"></span><span class="pb-trace t2"></span>
+                    </div>
+                    <div class="project-info">
+                        <h3>BLE-to-Wi-Fi Gateway — Proof of Concept</h3>
+                        <p>Dual-MCU gateway pairing a Nordic host with an ESP32 Wi-Fi bridge to evaluate connection
+                            handling and power/throughput efficiency for multi-device aggregation.</p>
+                        <div class="tech-stack">
+                            <span class="tech-badge">Nordic</span>
+                            <span class="tech-badge">ESP32</span>
+                            <span class="tech-badge">BLE</span>
+                            <span class="tech-badge">Wi-Fi</span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="project-card" data-project="BMS">
+                    <div class="project-board" aria-hidden="true">
+                        <span class="pb-chip"></span><span class="pb-trace"></span><span class="pb-trace t2"></span>
+                    </div>
+                    <div class="project-info">
+                        <h3>Battery Management System — Fault Detection &amp; IoT</h3>
+                        <p>Real-time voltage/temperature monitoring with SOC/SOH estimation, ML-based fault prediction,
+                            and cloud/mobile dashboards on ESP32.</p>
                         <div class="tech-stack">
                             <span class="tech-badge">ESP32</span>
                             <span class="tech-badge">C</span>
-                            <span class="tech-badge">ML</span>
+                            <span class="tech-badge">Machine Learning</span>
                             <span class="tech-badge">IoT</span>
                         </div>
                     </div>
@@ -371,150 +329,109 @@
         </div>
     </section>
 
-    <!-- Circuit Divider -->
-    <div class="circuit-divider" aria-hidden="true">
-        <svg viewBox="0 0 1200 32" fill="none" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-            <line x1="0" y1="16" x2="490" y2="16" stroke="#ffd54f" stroke-width="0.8"/>
-            <circle cx="496" cy="16" r="4" stroke="#ffd54f" stroke-width="1" fill="#0a120a"/>
-            <line x1="496" y1="6" x2="496" y2="26" stroke="#ffd54f" stroke-width="1.2"/>
-            <line x1="503" y1="9" x2="503" y2="23" stroke="#ffd54f" stroke-width="1.2"/>
-            <circle cx="510" cy="16" r="4" stroke="#ffd54f" stroke-width="1" fill="#0a120a"/>
-            <line x1="516" y1="16" x2="1200" y2="16" stroke="#ffd54f" stroke-width="0.8"/>
-        </svg>
-    </div>
+    <div class="flex-divider" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
 
-    <!-- Timeline -->
-    <section id="timeline" class="reveal">
+    <!-- ===================== LAB / EXPERIENCE + PUBLICATIONS ===================== -->
+    <section id="lab" class="reveal">
         <div class="container">
-            <h2 class="section-title">Experience</h2>
-            <div class="timeline-container">
-                <div class="timeline-item left">
-                    <div class="timeline-content">
-                        <div class="timeline-date">June 2025 – Present</div>
+            <h2 class="section-title"><span class="title-tag">0x05</span> Lab Log</h2>
+            <div class="scope-timeline">
+                <div class="scope-trace" aria-hidden="true"></div>
+                <div class="tl-event">
+                    <div class="tl-pulse"></div>
+                    <div class="tl-card">
+                        <div class="tl-date">June 2025 – Present</div>
                         <h3>Product Development Engineer</h3>
-                        <p class="timeline-company">Lifesigns, Chennai</p>
-                        <p>Building firmware for medical wearables — OLED display drivers (SSD1315), capacitive-touch
-                            HMI, ECG / SpO₂ / respiration sensing, BLE streaming, and OTA/DFU updates on nRF54L15
-                            and STM32 platforms. Deployed TensorFlow Lite for on-device BP estimation. Designed and
-                            shipped a 7-device concurrent BLE gateway system.</p>
+                        <p class="tl-org">Lifesigns, Chennai</p>
+                        <p>Multithreaded ECG / BioZ / SpO₂ acquisition on Zephyr RTOS, on-device signal-quality scoring,
+                            respiration-rate detection, BLE GATT streaming, and OTA/DFU via MCUboot. Deployed TensorFlow
+                            Lite for on-device BP estimation on STM32WB55. Designed schematics and multi-layer PCBs in
+                            Altium across three device programs.</p>
                     </div>
                 </div>
-                <div class="timeline-item right">
-                    <div class="timeline-content">
-                        <div class="timeline-date">2023 – 2024</div>
+                <div class="tl-event">
+                    <div class="tl-pulse"></div>
+                    <div class="tl-card">
+                        <div class="tl-date">2023 – 2024</div>
                         <h3>Industrial Internships</h3>
-                        <p class="timeline-company">Sunshiv Electronics · NSIC · Titan Co.</p>
-                        <p>PCB design at Sunshiv Electronics, Coimbatore (Jun 2024); embedded systems & IoT at NSIC,
-                            Chennai (May 2024); servo & PMDC motor systems at Titan Co., Hosur (Aug 2023).</p>
+                        <p class="tl-org">Sunshiv Electronics · NSIC · Titan Co.</p>
+                        <p>PCB design at Sunshiv Electronics, Coimbatore (2024); embedded systems &amp; IoT at NSIC
+                            (2024); servo &amp; PMDC motor systems at Titan Co. (2023).</p>
                     </div>
                 </div>
-                <div class="timeline-item left">
-                    <div class="timeline-content">
-                        <div class="timeline-date">2021 – 2025</div>
-                        <h3>B.Tech — Electrical & Electronics Engineering</h3>
-                        <p class="timeline-company">Amrita Vishwa Vidyapeetham, Coimbatore</p>
-                        <p>CGPA: 7.62/10. Core focus: embedded systems, power electronics, VLSI design, and control
-                            systems. Hands-on experience in PCB design with Altium, microcontroller programming in C,
-                            MATLAB/Simulink simulation, and ANSYS MotorCAD. Certified Associate LabVIEW Developer.</p>
+                <div class="tl-event">
+                    <div class="tl-pulse"></div>
+                    <div class="tl-card">
+                        <div class="tl-date">2021 – 2025</div>
+                        <h3>B.Tech — Electrical &amp; Electronics Engineering</h3>
+                        <p class="tl-org">Amrita Vishwa Vidyapeetham, Coimbatore</p>
+                        <p>CGPA 7.62/10. Certified Associate LabVIEW Developer (CLAD). Focus on embedded systems, power
+                            electronics, and control systems with MATLAB/Simulink and ANSYS MotorCAD.</p>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <!-- Circuit Divider -->
-    <div class="circuit-divider" aria-hidden="true">
-        <svg viewBox="0 0 1200 32" fill="none" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-            <line x1="0" y1="16" x2="505" y2="16" stroke="#00e676" stroke-width="0.8"/>
-            <circle cx="511" cy="16" r="4" stroke="#00e676" stroke-width="1" fill="#060d06"/>
-            <polyline points="523,16 528,7 533,25 538,7 543,25 548,16" stroke="#00e676" stroke-width="1.2" fill="none"/>
-            <circle cx="560" cy="16" r="4" stroke="#00e676" stroke-width="1" fill="#060d06"/>
-            <line x1="566" y1="16" x2="1200" y2="16" stroke="#00e676" stroke-width="0.8"/>
-        </svg>
-    </div>
-
-    <!-- Publications -->
-    <section id="publications" class="reveal">
-        <div class="container">
-            <h2 class="section-title">Publications</h2>
+            <h3 class="sub-heading">// Publications</h3>
             <div class="publications-list">
                 <article class="pub-card">
                     <div class="pub-venue">ICFCR 2024</div>
-                    <h3>Optimal Generation Scheduling in a Microgrid Using Stochastic Optimization Techniques</h3>
-                    <p>Compared Particle Swarm Optimization and Fuzzy Logic for microgrid generation scheduling,
-                        demonstrating improved real-time load balancing, reduced grid reliance, and better
-                        renewable energy utilization.</p>
+                    <h3>Optimal Generation Scheduling in a Microgrid Using Stochastic Optimization</h3>
+                    <p>Particle Swarm Optimization vs. Fuzzy Logic for microgrid generation scheduling — improved
+                        load balancing, reduced grid reliance, and better renewable utilization.</p>
                 </article>
                 <article class="pub-card">
                     <div class="pub-venue">ELGi Technology Day</div>
-                    <h3>Development of a 5 kW/kg High-Power-Density PMSM for Scroll Compressors</h3>
-                    <p>Designed a high-power-density PMSM using advanced magnets, optimized rotor geometry, and
-                        tailored cooling solutions for electric-mobility auxiliary systems.</p>
+                    <h3>5 kW/kg High-Power-Density PMSM for Scroll Compressors</h3>
+                    <p>High-power-density PMSM with optimized rotor geometry and tailored cooling for electric-mobility
+                        auxiliary drives.</p>
                 </article>
             </div>
         </div>
     </section>
 
-    <!-- Circuit Divider -->
-    <div class="circuit-divider" aria-hidden="true">
-        <svg viewBox="0 0 1200 32" fill="none" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-            <line x1="0" y1="16" x2="490" y2="16" stroke="#ffd54f" stroke-width="0.8"/>
-            <circle cx="496" cy="16" r="4" stroke="#ffd54f" stroke-width="1" fill="#0a120a"/>
-            <line x1="496" y1="6" x2="496" y2="26" stroke="#ffd54f" stroke-width="1.2"/>
-            <line x1="503" y1="9" x2="503" y2="23" stroke="#ffd54f" stroke-width="1.2"/>
-            <circle cx="510" cy="16" r="4" stroke="#ffd54f" stroke-width="1" fill="#0a120a"/>
-            <line x1="516" y1="16" x2="1200" y2="16" stroke="#ffd54f" stroke-width="0.8"/>
-        </svg>
-    </div>
+    <div class="flex-divider" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
 
-    <!-- Contact -->
+    <!-- ===================== CONTACT / UART ===================== -->
     <section id="contact" class="reveal">
         <div class="container">
-            <h2 class="section-title">Get In Touch</h2>
+            <h2 class="section-title"><span class="title-tag">0x06</span> UART Link</h2>
             <div class="contact-wrapper">
                 <div class="contact-cli">
                     <div class="cli-header">
-                        <span class="cli-dot red"></span>
-                        <span class="cli-dot yellow"></span>
-                        <span class="cli-dot green"></span>
-                        <span class="cli-title">terminal</span>
+                        <span class="cli-dot red"></span><span class="cli-dot yellow"></span><span
+                            class="cli-dot green"></span>
+                        <span class="cli-title">/dev/ttyUSB0 · 115200 baud</span>
                     </div>
-                    <div class="cli-line">
-                        <span class="prompt">user@vishveshwaran:~$</span>
-                        <span>./send_message.sh</span>
-                    </div>
+                    <div class="cli-boot" id="cli-boot" aria-hidden="true"></div>
                     <form id="contact-form" action="mailto:vishveshwaran13@gmail.com" method="post"
                         enctype="text/plain">
                         <div class="cli-line">
-                            <label for="contact-name" class="prompt">Name:</label>
+                            <label for="contact-name" class="prompt">name:~$</label>
                             <input type="text" id="contact-name" name="name" class="cli-input" required
-                                autocomplete="name" placeholder="Your name">
+                                autocomplete="name" placeholder="your name">
                         </div>
                         <div class="cli-line">
-                            <label for="contact-subject" class="prompt">Subject:</label>
+                            <label for="contact-subject" class="prompt">subj:~$</label>
                             <input type="text" id="contact-subject" name="subject" class="cli-input" required
-                                autocomplete="off" placeholder="What's this about?">
+                                autocomplete="off" placeholder="what's this about?">
                         </div>
                         <div class="cli-line">
-                            <label for="contact-message" class="prompt">Message:</label>
+                            <label for="contact-message" class="prompt">msg:~$</label>
                             <input type="text" id="contact-message" name="message" class="cli-input" required
-                                autocomplete="off" placeholder="Your message...">
+                                autocomplete="off" placeholder="your message...">
                             <span class="cursor" aria-hidden="true">_</span>
                         </div>
                         <div class="cli-line">
-                            <button type="submit" class="btn btn-primary">EXECUTE SEND</button>
+                            <button type="submit" class="btn btn-primary">TX &gt; SEND</button>
                         </div>
                     </form>
                 </div>
 
                 <div class="contact-info">
                     <h3>Let's Connect</h3>
-                    <p style="color:var(--text-secondary); margin-bottom: 0.6rem;">
-                        <i class="fas fa-map-marker-alt" style="color:var(--accent-green); margin-right: 6px;"></i>
-                        Chennai, Tamil Nadu, India
-                    </p>
-                    <p style="color:var(--text-secondary); margin-bottom: 1.5rem;">Open for collaborations in
-                        Embedded Firmware, Medical Devices, and IoT systems development.</p>
+                    <p class="contact-loc"><i class="fas fa-map-marker-alt"></i> Chennai, Tamil Nadu, India</p>
+                    <p class="contact-blurb">Open for collaborations in Embedded Firmware, Medical Devices, and IoT
+                        systems development.</p>
                     <div class="social-links">
                         <a href="#" class="social-icon" aria-label="GitHub profile"><i class="fab fa-github"></i></a>
                         <a href="https://www.linkedin.com/in/vishveshwaran-m-16b6b6221" target="_blank"
@@ -528,21 +445,19 @@
         </div>
     </section>
 
-    <!-- Footer -->
+    <!-- ===================== FOOTER ===================== -->
     <footer>
         <div class="container">
-            <p>&copy; <span id="footer-year">2026</span> Vishveshwaran. Built with <i class="fas fa-code"
-                    style="color:var(--accent-cyan)"></i> and <i class="fas fa-coffee"
-                    style="color:var(--accent-amber)"></i></p>
+            <p>&copy; <span id="footer-year">2026</span> Vishveshwaran · firmware &amp; <i class="fas fa-mug-hot"></i>
+                · powered down gracefully.</p>
         </div>
     </footer>
 
-    <!-- Back to Top Button -->
     <button id="back-to-top" class="back-to-top" aria-label="Scroll back to top">
         <i class="fas fa-chevron-up"></i>
     </button>
 
-    <!-- Project Modal -->
+    <!-- ===================== PROJECT MODAL ===================== -->
     <div id="project-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
         <div class="modal-content">
             <button class="close-modal" aria-label="Close project details">&times;</button>
@@ -550,24 +465,14 @@
                 <div class="modal-header">
                     <h2 id="modal-title">Project Title</h2>
                 </div>
-                <div class="modal-grid">
-                    <div class="modal-visuals">
-                        <div class="modal-img-frame">
-                            <img id="modal-image" src="" alt="Project detail view">
-                        </div>
-                    </div>
+                <div class="modal-grid modal-grid--no-image">
                     <div class="modal-details">
                         <h4>Challenge:</h4>
-                        <p id="modal-challenge" style="margin-bottom: 1.5rem; color: var(--text-secondary);">
-                        </p>
-
-                        <h4>Approach & Solution:</h4>
-                        <ul id="modal-solution">
-                            <!-- Populated by JS -->
-                        </ul>
-
+                        <p id="modal-challenge"></p>
+                        <h4>Approach &amp; Solution:</h4>
+                        <ul id="modal-solution"></ul>
                         <h4>Impact:</h4>
-                        <p id="modal-impact" style="color: var(--accent-amber); font-weight:500;"></p>
+                        <p id="modal-impact" class="modal-impact"></p>
                     </div>
                 </div>
             </div>
