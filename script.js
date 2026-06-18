@@ -1,3 +1,11 @@
+// Global mouse position — shared by cursor + canvas
+let globalMouseX = window.innerWidth / 2;
+let globalMouseY = window.innerHeight / 2;
+document.addEventListener('mousemove', (e) => {
+    globalMouseX = e.clientX;
+    globalMouseY = e.clientY;
+});
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- Dynamic Footer Year ---
@@ -6,13 +14,65 @@ document.addEventListener('DOMContentLoaded', () => {
         footerYear.textContent = new Date().getFullYear();
     }
 
-    // --- Typewriter Effect ---
+    // =========================================================
+    // CUSTOM RESISTOR CURSOR
+    // =========================================================
+    const cursorEl = document.getElementById('custom-cursor');
+    const resistorBody = cursorEl ? cursorEl.querySelector('.resistor-body') : null;
+    const isPointerFine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+    if (cursorEl && isPointerFine) {
+        // Position cursor: left-lead tip (x=0, y=8) tracks the mouse
+        document.addEventListener('mousemove', (e) => {
+            cursorEl.style.transform = `translate(${e.clientX}px, ${e.clientY - 8}px)`;
+        });
+
+        // Show / hide on window enter / leave
+        document.addEventListener('mouseleave', () => { cursorEl.style.opacity = '0'; });
+        document.addEventListener('mouseenter', () => { cursorEl.style.opacity = '1'; });
+
+        // Click state
+        document.addEventListener('mousedown', () => cursorEl.classList.add('cursor-clicking'));
+        document.addEventListener('mouseup',   () => cursorEl.classList.remove('cursor-clicking'));
+
+        // Hover state on interactive elements
+        const interactiveEls = document.querySelectorAll(
+            'a, button, .project-card, .skill-item, .pub-card, .timeline-content, .about-stat'
+        );
+        interactiveEls.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursorEl.classList.add('cursor-hover');
+                if (resistorBody) resistorBody.setAttribute('fill', '#e8c060');
+            });
+            el.addEventListener('mouseleave', () => {
+                cursorEl.classList.remove('cursor-hover');
+                if (resistorBody) resistorBody.setAttribute('fill', '#c8a84b');
+            });
+        });
+    }
+
+    // =========================================================
+    // CLICK RIPPLE EFFECT
+    // =========================================================
+    document.addEventListener('click', (e) => {
+        const ripple = document.createElement('div');
+        ripple.className = 'cursor-ripple';
+        ripple.style.left = e.clientX + 'px';
+        ripple.style.top  = e.clientY + 'px';
+        document.body.appendChild(ripple);
+        ripple.addEventListener('animationend', () => ripple.remove());
+    });
+
+    // =========================================================
+    // TYPEWRITER EFFECT
+    // =========================================================
     const typewriterElement = document.querySelector('.typewriter');
     const phrases = [
         "Embedded Firmware",
-        "BLE & IoT Systems",
-        "Medical Devices",
-        "Sensor Integration",
+        "OLED Display Drivers",
+        "BLE & Wi-Fi Systems",
+        "Medical Wearables",
+        "OTA / DFU Updates",
         "Edge AI on Microcontrollers"
     ];
     let phraseIndex = 0;
@@ -22,7 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function type() {
         const currentPhrase = phrases[phraseIndex];
-
         if (isDeleting) {
             typewriterElement.textContent = '> ' + currentPhrase.substring(0, charIndex - 1) + '_';
             charIndex--;
@@ -32,7 +91,6 @@ document.addEventListener('DOMContentLoaded', () => {
             charIndex++;
             typeSpeed = 80;
         }
-
         if (!isDeleting && charIndex === currentPhrase.length) {
             isDeleting = true;
             typeSpeed = 2000;
@@ -41,13 +99,28 @@ document.addEventListener('DOMContentLoaded', () => {
             phraseIndex = (phraseIndex + 1) % phrases.length;
             typeSpeed = 400;
         }
-
         setTimeout(type, typeSpeed);
     }
 
     if (typewriterElement) type();
 
-    // --- Mobile Menu ---
+    // =========================================================
+    // GLITCH EFFECT ON NAME
+    // =========================================================
+    const nameEl = document.querySelector('.highlight-name');
+    if (nameEl) {
+        nameEl.addEventListener('mouseenter', () => {
+            if (nameEl.classList.contains('glitching')) return;
+            nameEl.classList.add('glitching');
+            nameEl.addEventListener('animationend', () => {
+                nameEl.classList.remove('glitching');
+            }, { once: true });
+        });
+    }
+
+    // =========================================================
+    // MOBILE MENU
+    // =========================================================
     const hamburger = document.querySelector('.hamburger');
     const mobileMenu = document.querySelector('.mobile-menu');
 
@@ -56,27 +129,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const isOpen = mobileMenu.classList.toggle('active');
             const icon = hamburger.querySelector('i');
             hamburger.setAttribute('aria-expanded', isOpen);
-
-            if (isOpen) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
-            } else {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            }
+            icon.classList.toggle('fa-bars', !isOpen);
+            icon.classList.toggle('fa-times', isOpen);
         });
 
         mobileMenu.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', () => {
                 mobileMenu.classList.remove('active');
                 hamburger.setAttribute('aria-expanded', 'false');
-                hamburger.querySelector('i').classList.remove('fa-times');
-                hamburger.querySelector('i').classList.add('fa-bars');
+                hamburger.querySelector('i').classList.replace('fa-times', 'fa-bars');
             });
         });
     }
 
-    // --- Project Modal Data ---
+    // =========================================================
+    // PROJECT MODAL DATA
+    // =========================================================
     const projectData = {
         'ECG_PATCH': {
             title: 'ECG Patch Firmware',
@@ -120,6 +188,19 @@ document.addEventListener('DOMContentLoaded', () => {
             ],
             impact: 'Validated on-device BP estimation matching patient monitor readings within clinical tolerance. Shipped ML inference on a 184KB MCU with real-time SpO2 and display rendering.'
         },
+        'BMS': {
+            title: 'Battery Management System with IoT Monitoring',
+            image: 'project_bms.png',
+            challenge: 'Build a reliable embedded BMS capable of real-time battery state estimation, proactive fault prediction, and remote IoT monitoring — without the overhead of a full OS, on an ESP32 platform.',
+            solution: [
+                'Implemented real-time voltage and temperature monitoring using analog sensor integration on ESP32 with configurable sampling rates.',
+                'Developed SOC (State of Charge) and SOH (State of Health) estimation algorithms to accurately track battery condition under varying load profiles.',
+                'Integrated an ML-based fault detection model to predict battery anomalies — overvoltage, thermal runaway risk, cell imbalance — before failure occurs.',
+                'Built cloud-connected IoT dashboards accessible via mobile and browser, enabling remote battery health monitoring and alerting.',
+                'Implemented UART-based data logging for offline analysis and algorithm validation against real battery discharge curves.'
+            ],
+            impact: 'Delivered a full-stack embedded BMS with predictive fault detection and remote IoT monitoring, enabling proactive battery management for embedded power applications.'
+        },
         'TEMP_PATCH': {
             title: 'Flex Temperature Patch',
             image: 'project_temppatch.png',
@@ -136,7 +217,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- Modal Logic ---
+    // =========================================================
+    // MODAL LOGIC
+    // =========================================================
     const modal = document.getElementById('project-modal');
     const closeModalBtn = document.querySelector('.close-modal');
     const projectCards = document.querySelectorAll('.project-card');
@@ -146,59 +229,46 @@ document.addEventListener('DOMContentLoaded', () => {
             card.addEventListener('click', () => {
                 const projectId = card.getAttribute('data-project');
                 const data = projectData[projectId];
+                if (!data) return;
 
-                if (data) {
-                    document.getElementById('modal-title').textContent = data.title;
-                    document.getElementById('modal-challenge').textContent = data.challenge;
+                document.getElementById('modal-title').textContent = data.title;
+                document.getElementById('modal-challenge').textContent = data.challenge;
 
-                    const modalImage = document.getElementById('modal-image');
-                    if (modalImage && data.image) {
-                        modalImage.src = data.image;
-                        modalImage.alt = data.title + ' — detailed project view';
-                    }
-
-                    const solutionList = document.getElementById('modal-solution');
-                    solutionList.innerHTML = '';
-                    data.solution.forEach(item => {
-                        const li = document.createElement('li');
-                        li.textContent = item;
-                        solutionList.appendChild(li);
-                    });
-
-                    const impactEl = document.getElementById('modal-impact');
-                    if (impactEl) {
-                        impactEl.textContent = data.impact;
-                    }
-
-                    modal.classList.add('active');
-                    document.body.style.overflow = 'hidden';
+                const modalImage = document.getElementById('modal-image');
+                if (modalImage && data.image) {
+                    modalImage.src = data.image;
+                    modalImage.alt = data.title + ' — detailed project view';
                 }
+
+                const solutionList = document.getElementById('modal-solution');
+                solutionList.innerHTML = '';
+                data.solution.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item;
+                    solutionList.appendChild(li);
+                });
+
+                const impactEl = document.getElementById('modal-impact');
+                if (impactEl) impactEl.textContent = data.impact;
+
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
             });
         });
 
-        if (closeModalBtn) {
-            closeModalBtn.addEventListener('click', () => {
-                modal.classList.remove('active');
-                document.body.style.overflow = '';
-            });
-        }
+        const closeModal = () => {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        };
 
-        window.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && modal.classList.contains('active')) {
-                modal.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-        });
+        if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+        window.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
     }
 
-    // --- Circuit Flow Background Animation ---
+    // =========================================================
+    // HERO CANVAS — particle network with mouse repulsion
+    // =========================================================
     const canvas = document.getElementById('hero-canvas');
     if (canvas) {
         const ctx = canvas.getContext('2d');
@@ -206,34 +276,63 @@ document.addEventListener('DOMContentLoaded', () => {
         let nodes = [];
 
         function resize() {
-            width = canvas.width = window.innerWidth;
+            width  = canvas.width  = window.innerWidth;
             height = canvas.height = window.innerHeight;
         }
 
         class Node {
-            constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 0.4;
-                this.vy = (Math.random() - 0.5) * 0.4;
-                this.size = Math.random() * 2 + 0.8;
+            constructor() { this.reset(); }
+
+            reset() {
+                this.x     = Math.random() * width;
+                this.y     = Math.random() * height;
+                this.baseVx = (Math.random() - 0.5) * 0.5;
+                this.baseVy = (Math.random() - 0.5) * 0.5;
+                this.vx    = this.baseVx;
+                this.vy    = this.baseVy;
+                this.size  = Math.random() * 2 + 0.8;
                 this.pulse = Math.random() * Math.PI * 2;
             }
 
             update() {
+                // Mouse repulsion
+                const dx   = this.x - globalMouseX;
+                const dy   = this.y - globalMouseY;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                const repelRadius = 120;
+
+                if (dist < repelRadius && dist > 0) {
+                    const force = (repelRadius - dist) / repelRadius * 1.2;
+                    this.vx += (dx / dist) * force;
+                    this.vy += (dy / dist) * force;
+                }
+
+                // Dampen back toward base velocity
+                this.vx += (this.baseVx - this.vx) * 0.04;
+                this.vy += (this.baseVy - this.vy) * 0.04;
+
+                // Clamp speed
+                const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+                if (speed > 3) {
+                    this.vx = (this.vx / speed) * 3;
+                    this.vy = (this.vy / speed) * 3;
+                }
+
                 this.x += this.vx;
                 this.y += this.vy;
 
-                if (this.x < 0 || this.x > width) this.vx *= -1;
-                if (this.y < 0 || this.y > height) this.vy *= -1;
+                if (this.x < 0 || this.x > width)  this.vx    *= -1;
+                if (this.y < 0 || this.y > height)  this.vy    *= -1;
+                if (this.x < 0 || this.x > width)   this.baseVx *= -1;
+                if (this.y < 0 || this.y > height)  this.baseVy *= -1;
 
                 this.pulse += 0.04;
             }
 
             draw() {
-                ctx.fillStyle = '#00e676';
+                const currentSize = this.size + Math.sin(this.pulse) * 0.5;
+                ctx.fillStyle = 'rgba(0, 230, 118, 0.85)';
                 ctx.beginPath();
-                const currentSize = this.size + Math.sin(this.pulse) * 0.4;
                 ctx.arc(this.x, this.y, Math.max(0.5, currentSize), 0, Math.PI * 2);
                 ctx.fill();
             }
@@ -241,10 +340,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function initNodes() {
             nodes = [];
-            const count = Math.min(80, Math.floor((width * height) / 15000));
-            for (let i = 0; i < count; i++) {
-                nodes.push(new Node());
-            }
+            const count = Math.min(100, Math.floor((width * height) / 12000));
+            for (let i = 0; i < count; i++) nodes.push(new Node());
         }
 
         function animate() {
@@ -255,108 +352,110 @@ document.addEventListener('DOMContentLoaded', () => {
                 nodes[i].draw();
 
                 for (let j = i + 1; j < nodes.length; j++) {
-                    const dx = nodes[i].x - nodes[j].x;
-                    const dy = nodes[i].y - nodes[j].y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    const dx   = nodes[i].x - nodes[j].x;
+                    const dy   = nodes[i].y - nodes[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
 
-                    if (distance < 130) {
-                        const opacity = 0.1 * (1 - distance / 130);
+                    if (dist < 140) {
+                        const opacity = 0.12 * (1 - dist / 140);
                         ctx.strokeStyle = `rgba(0, 230, 118, ${opacity})`;
-                        ctx.lineWidth = 1;
+                        ctx.lineWidth = 0.8;
                         ctx.beginPath();
                         ctx.moveTo(nodes[i].x, nodes[i].y);
                         ctx.lineTo(nodes[j].x, nodes[j].y);
                         ctx.stroke();
                     }
                 }
+
+                // Draw connection line from node to cursor when close
+                const cdx  = nodes[i].x - globalMouseX;
+                const cdy  = nodes[i].y - globalMouseY;
+                const cdist = Math.sqrt(cdx * cdx + cdy * cdy);
+                if (cdist < 160) {
+                    const opacity = 0.2 * (1 - cdist / 160);
+                    ctx.strokeStyle = `rgba(255, 213, 79, ${opacity})`;
+                    ctx.lineWidth = 0.6;
+                    ctx.beginPath();
+                    ctx.moveTo(nodes[i].x, nodes[i].y);
+                    ctx.lineTo(globalMouseX, globalMouseY);
+                    ctx.stroke();
+                }
             }
 
             requestAnimationFrame(animate);
         }
 
-        window.addEventListener('resize', () => {
-            resize();
-            initNodes();
-        });
+        window.addEventListener('resize', () => { resize(); initNodes(); });
         resize();
         initNodes();
         animate();
     }
 
-    // --- 3D Tilt Effect for Cards ---
+    // =========================================================
+    // 3D TILT EFFECT ON PROJECT CARDS
+    // =========================================================
     const tiltCards = document.querySelectorAll('.project-card');
-    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    const isMobile  = window.matchMedia('(max-width: 768px)').matches;
 
     if (!isMobile) {
         tiltCards.forEach(card => {
             card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-
-                const rotateX = ((y - centerY) / centerY) * -3;
-                const rotateY = ((x - centerX) / centerX) * 3;
-
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.005)`;
+                const rect    = card.getBoundingClientRect();
+                const x       = e.clientX - rect.left;
+                const y       = e.clientY - rect.top;
+                const rotateX = ((y - rect.height / 2) / rect.height) * -5;
+                const rotateY = ((x - rect.width  / 2) / rect.width)  *  5;
+                card.style.transform = `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
             });
 
             card.addEventListener('mouseleave', () => {
-                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
+                card.style.transform = 'perspective(900px) rotateX(0) rotateY(0) scale(1)';
             });
         });
     }
 
-    // --- Scroll Reveal Animation ---
-    const revealElements = document.querySelectorAll('.reveal');
-
+    // =========================================================
+    // SCROLL REVEAL
+    // =========================================================
     const revealObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('active');
-            }
+            if (entry.isIntersecting) entry.target.classList.add('active');
         });
-    }, { threshold: 0.1 });
+    }, { threshold: 0.08 });
 
-    revealElements.forEach(el => revealObserver.observe(el));
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-    // --- Back to Top Button ---
+    // =========================================================
+    // BACK TO TOP BUTTON
+    // =========================================================
     const backToTopBtn = document.getElementById('back-to-top');
-
     if (backToTopBtn) {
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 500) {
-                backToTopBtn.classList.add('visible');
-            } else {
-                backToTopBtn.classList.remove('visible');
-            }
+            backToTopBtn.classList.toggle('visible', window.scrollY > 500);
         });
-
         backToTopBtn.addEventListener('click', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     }
 
-    // --- Active Nav Link Highlight ---
-    const sections = document.querySelectorAll('section[id]');
-    const navLinks = document.querySelectorAll('.nav-links a');
+    // =========================================================
+    // ACTIVE NAV LINK HIGHLIGHT (fixed: was using undefined --accent-cyan)
+    // =========================================================
+    const sections  = document.querySelectorAll('section[id]');
+    const navLinks  = document.querySelectorAll('.nav-links a');
 
     window.addEventListener('scroll', () => {
         let current = '';
         sections.forEach(section => {
-            const sectionTop = section.offsetTop - 100;
-            if (window.scrollY >= sectionTop) {
+            if (window.scrollY >= section.offsetTop - 120) {
                 current = section.getAttribute('id');
             }
         });
 
         navLinks.forEach(link => {
-            link.style.color = '';
-            if (link.getAttribute('href') === '#' + current) {
-                link.style.color = 'var(--accent-cyan)';
-            }
+            const isActive = link.getAttribute('href') === '#' + current;
+            link.style.color = isActive ? 'var(--accent-green)' : '';
         });
     });
+
 });

@@ -808,6 +808,79 @@ nav {
     line-height: 1.6;
 }
 
+/* ===== PUBLICATIONS SECTION ===== */
+#publications {
+    padding: var(--section-padding);
+}
+
+.publications-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.pub-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    padding: 2rem;
+    position: relative;
+    transition: border-color 0.3s, transform 0.3s;
+}
+
+.pub-card:hover {
+    border-color: var(--accent-green);
+    transform: translateY(-3px);
+}
+
+.pub-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent-green), var(--accent-amber));
+    border-radius: 10px 10px 0 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.pub-card:hover::before {
+    opacity: 1;
+}
+
+.pub-venue {
+    font-family: var(--font-header);
+    font-size: 0.72rem;
+    color: var(--accent-amber);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 0.7rem;
+}
+
+.pub-card h3 {
+    font-family: var(--font-header);
+    font-size: 0.92rem;
+    color: var(--text-primary);
+    margin-bottom: 0.8rem;
+    line-height: 1.5;
+}
+
+.pub-card p {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.65;
+}
+
+@media (max-width: 768px) {
+    .publications-list {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* ===== CONTACT SECTION ===== */
 #contact {
     padding: var(--section-padding);
@@ -1309,4 +1382,277 @@ footer {
 
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(0, 230, 118, 0.3);
+}
+
+/* ===== CUSTOM RESISTOR CURSOR ===== */
+@media (hover: hover) and (pointer: fine) {
+    *, *::before, *::after {
+        cursor: none !important;
+    }
+}
+
+#custom-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 99999;
+    will-change: transform;
+    filter: drop-shadow(0 0 4px rgba(0, 230, 118, 0.9));
+    transition: filter 0.18s ease;
+    display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    #custom-cursor {
+        display: block;
+    }
+}
+
+#custom-cursor.cursor-hover {
+    filter: drop-shadow(0 0 8px rgba(0, 230, 118, 1))
+            drop-shadow(0 0 18px rgba(0, 230, 118, 0.5));
+}
+
+#custom-cursor.cursor-hover .resistor-body {
+    fill: #e8c060;
+    transition: fill 0.15s;
+}
+
+#custom-cursor.cursor-clicking {
+    filter: drop-shadow(0 0 12px rgba(255, 213, 79, 1))
+            drop-shadow(0 0 24px rgba(255, 213, 79, 0.6));
+}
+
+/* Click ripple */
+.cursor-ripple {
+    position: fixed;
+    border: 1.5px solid var(--accent-green);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99990;
+    transform: translate(-50%, -50%);
+    animation: ripple-out 0.55s ease-out forwards;
+}
+
+@keyframes ripple-out {
+    0%   { width: 6px;  height: 6px;  opacity: 0.9; }
+    100% { width: 54px; height: 54px; opacity: 0; }
+}
+
+/* ===== PCB GRID BACKGROUND ===== */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -10;
+    pointer-events: none;
+    background-image:
+        linear-gradient(rgba(0, 230, 118, 0.028) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 230, 118, 0.028) 1px, transparent 1px);
+    background-size: 40px 40px;
+}
+
+/* PCB dot intersections */
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -9;
+    pointer-events: none;
+    background-image: radial-gradient(circle, rgba(0, 230, 118, 0.08) 1px, transparent 1px);
+    background-size: 40px 40px;
+}
+
+/* ===== CRT SCANLINES ===== */
+.scanlines {
+    position: fixed;
+    inset: 0;
+    z-index: 9990;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(0, 0, 0, 0.04) 3px,
+        rgba(0, 0, 0, 0.04) 4px
+    );
+}
+
+/* ===== FILM GRAIN / NOISE ===== */
+.noise-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9989;
+    pointer-events: none;
+    opacity: 0.022;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 256px 256px;
+    animation: grain-shift 0.5s steps(1) infinite;
+}
+
+@keyframes grain-shift {
+    0%   { background-position: 0 0; }
+    20%  { background-position: -30px 10px; }
+    40%  { background-position: 20px -15px; }
+    60%  { background-position: -10px 20px; }
+    80%  { background-position: 15px -5px; }
+    100% { background-position: 0 0; }
+}
+
+/* ===== AMBIENT CORNER GLOWS ===== */
+.ambient-glow {
+    position: fixed;
+    pointer-events: none;
+    z-index: -5;
+    border-radius: 50%;
+}
+
+.ambient-glow-tl {
+    top: -200px;
+    left: -200px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(ellipse, rgba(0, 230, 118, 0.07) 0%, transparent 65%);
+    animation: glow-pulse-tl 6s ease-in-out infinite;
+}
+
+.ambient-glow-br {
+    bottom: -200px;
+    right: -200px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(ellipse, rgba(255, 213, 79, 0.05) 0%, transparent 65%);
+    animation: glow-pulse-br 8s ease-in-out infinite;
+}
+
+@keyframes glow-pulse-tl {
+    0%, 100% { opacity: 0.7; transform: scale(1); }
+    50%       { opacity: 1;   transform: scale(1.15); }
+}
+
+@keyframes glow-pulse-br {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50%       { opacity: 0.9; transform: scale(1.1); }
+}
+
+/* ===== OSCILLOSCOPE HERO GRID ===== */
+#hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+        linear-gradient(rgba(0, 230, 118, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 230, 118, 0.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+}
+
+/* Scope corner tick marks */
+#hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: radial-gradient(circle, rgba(0, 230, 118, 0.12) 1px, transparent 1px);
+    background-size: 60px 60px;
+}
+
+/* ===== CIRCUIT DIVIDERS ===== */
+.circuit-divider {
+    width: 100%;
+    height: 32px;
+    overflow: hidden;
+    opacity: 0.35;
+    pointer-events: none;
+    background: transparent;
+}
+
+.circuit-divider svg {
+    width: 100%;
+    height: 32px;
+    display: block;
+}
+
+/* ===== GLITCH ANIMATION ON NAME ===== */
+@keyframes glitch-name {
+    0%, 100% {
+        text-shadow: 0 0 10px rgba(255, 213, 79, 0.4);
+        transform: translate(0, 0);
+    }
+    8%  { text-shadow: -3px 0 rgba(255,40,40,0.8),  3px 0 rgba(0,255,140,0.8); transform: translate(-3px, 1px); }
+    16% { text-shadow:  3px 0 rgba(255,40,40,0.8), -3px 0 rgba(0,255,140,0.8); transform: translate(3px, -1px); }
+    24% { text-shadow: 0 0 10px rgba(255, 213, 79, 0.4); transform: translate(0, 0); }
+    32% { text-shadow: -2px 0 rgba(0,80,255,0.7),  2px 0 rgba(255,0,120,0.7); transform: translate(-2px, 2px); }
+    40% { text-shadow: 0 0 10px rgba(255, 213, 79, 0.4); transform: translate(0, 0); }
+    52% { text-shadow:  3px 0 rgba(255,40,40,0.8), -2px 0 rgba(0,230,180,0.8); transform: translate(2px, -2px); }
+    60% { text-shadow: 0 0 10px rgba(255, 213, 79, 0.4); transform: translate(0, 0); }
+}
+
+.highlight-name.glitching {
+    animation: glitch-name 0.55s steps(1) forwards;
+}
+
+/* ===== ENHANCED PROJECT CARD HOVER ===== */
+.project-card:hover {
+    border-color: var(--accent-green);
+    box-shadow:
+        0 0 0 1px rgba(0, 230, 118, 0.15),
+        0 8px 40px rgba(0, 230, 118, 0.15),
+        0 0 80px rgba(0, 230, 118, 0.05),
+        inset 0 0 40px rgba(0, 230, 118, 0.03);
+    animation-play-state: paused;
+}
+
+/* ===== ENHANCED SKILL CARD HOVER ===== */
+.skill-category:hover {
+    box-shadow:
+        0 0 30px rgba(0, 230, 118, 0.1),
+        inset 0 0 20px rgba(0, 230, 118, 0.02);
+}
+
+/* ===== ENHANCED TIMELINE HOVER ===== */
+.timeline-content:hover {
+    box-shadow: 0 0 30px rgba(0, 230, 118, 0.1);
+}
+
+/* ===== ENHANCED SECTION TITLE ===== */
+.section-title {
+    text-shadow:
+        0 0 15px var(--accent-green-glow),
+        0 0 40px rgba(0, 230, 118, 0.15);
+}
+
+/* ===== PUB CARD ENHANCED HOVER ===== */
+.pub-card:hover {
+    box-shadow: 0 0 30px rgba(0, 230, 118, 0.1);
+}
+
+/* ===== HEADER ENHANCED ===== */
+header {
+    box-shadow: 0 1px 30px rgba(0, 230, 118, 0.05);
+}
+
+/* ===== HERO CONTENT ABOVE GRIDS ===== */
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.ecg-hero-line {
+    z-index: 1;
+}
+
+/* ===== MOBILE: DISABLE HEAVY EFFECTS ===== */
+@media (max-width: 768px) {
+    .scanlines        { display: none; }
+    .noise-overlay    { display: none; }
+    .ambient-glow     { display: none; }
+    .circuit-divider  { display: none; }
+    body::before      { display: none; }
+    body::after       { display: none; }
+    #hero::before     { display: none; }
+    #hero::after      { display: none; }
 }

@@ -4,15 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vishveshwaran | Embedded Systems Engineer — Medical-Grade Firmware & BLE IoT</title>
+    <title>Vishveshwaran | Embedded Firmware & Design Engineer — Medical Wearables & BLE IoT</title>
     <meta name="description"
-        content="Portfolio of Vishveshwaran, an Embedded Systems Engineer specializing in medical-grade firmware, BLE protocol design, sensor integration (MAX30001, LIS2DUX12), Zephyr RTOS, and Edge AI on nRF52/54 & STM32 platforms.">
+        content="Portfolio of Vishveshwaran, an Embedded Firmware & Design Engineer specializing in medical-grade wearables, OLED display drivers, BLE/Wi-Fi connectivity, Zephyr RTOS, OTA/DFU, and TensorFlow Lite on nRF54L15 & STM32 platforms.">
     <meta name="keywords"
-        content="Embedded Systems Engineer, Firmware Developer, BLE, IoT, nRF52, nRF54, STM32, Zephyr RTOS, Medical Device, ECG, MAX30001, LIS2DUX12, Edge AI, PCB Design">
+        content="Embedded Firmware Engineer, Product Development Engineer, BLE, IoT, nRF54L15, STM32, ESP32, Zephyr RTOS, Medical Device, ECG, OLED Display Driver, Capacitive Touch, OTA DFU, TensorFlow Lite, PCB Design, Altium">
     <meta name="author" content="Vishveshwaran">
 
     <!-- Open Graph -->
-    <meta property="og:title" content="Vishveshwaran | Embedded Systems Engineer">
+    <meta property="og:title" content="Vishveshwaran | Embedded Firmware & Design Engineer">
     <meta property="og:description"
         content="Building medical-grade firmware, BLE IoT systems, and edge AI solutions on ARM Cortex-M platforms.">
     <meta property="og:type" content="website">
@@ -32,6 +32,25 @@
 </head>
 
 <body>
+
+    <!-- Custom Resistor Cursor -->
+    <div id="custom-cursor" aria-hidden="true">
+        <svg width="54" height="16" viewBox="0 0 54 16" xmlns="http://www.w3.org/2000/svg">
+            <line x1="0" y1="8" x2="13" y2="8" stroke="#9a9a9a" stroke-width="1.5" stroke-linecap="round"/>
+            <rect class="resistor-body" x="13" y="2.5" width="28" height="11" rx="2.5" fill="#c8a84b"/>
+            <rect x="18" y="2.5" width="3" height="11" fill="#111"/>
+            <rect x="23" y="2.5" width="3" height="11" fill="#00cc66"/>
+            <rect x="28" y="2.5" width="3" height="11" fill="#e05500"/>
+            <rect x="35" y="2.5" width="2.5" height="11" fill="#d4a017"/>
+            <line x1="41" y1="8" x2="54" y2="8" stroke="#9a9a9a" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+    </div>
+
+    <!-- Atmosphere Layers -->
+    <div class="scanlines" aria-hidden="true"></div>
+    <div class="noise-overlay" aria-hidden="true"></div>
+    <div class="ambient-glow ambient-glow-tl" aria-hidden="true"></div>
+    <div class="ambient-glow ambient-glow-br" aria-hidden="true"></div>
 
     <!-- ECG Waveform Side Borders -->
     <div class="ecg-border-left" aria-hidden="true">
@@ -61,6 +80,7 @@
                     <li><a href="#skills">Arsenal</a></li>
                     <li><a href="#projects">Projects</a></li>
                     <li><a href="#timeline">Timeline</a></li>
+                    <li><a href="#publications">Publications</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
 
@@ -80,6 +100,7 @@
         <a href="#skills">Arsenal</a>
         <a href="#projects">Projects</a>
         <a href="#timeline">Timeline</a>
+        <a href="#publications">Publications</a>
         <a href="#contact">Contact</a>
     </div>
 
@@ -88,8 +109,8 @@
         <canvas id="hero-canvas" aria-hidden="true"></canvas>
         <div class="container hero-content reveal">
             <p class="hero-greeting">Hello, world.</p>
-            <h1>I'm <span class="highlight-name">Vishveshwaran</span> —<br>an Embedded Systems Engineer<br>building
-                <span class="highlight-cyan">medical-grade firmware</span>.
+            <h1>I'm <span class="highlight-name" data-text="Vishveshwaran">Vishveshwaran</span> —<br>an Embedded Firmware & Design Engineer<br>building
+                <span class="highlight-cyan">medical-grade wearables & HMI systems</span>.
             </h1>
             <div class="typewriter" aria-live="polite"></div>
             <div class="hero-cta">
@@ -107,6 +128,18 @@
         </div>
     </section>
 
+    <!-- Circuit Divider -->
+    <div class="circuit-divider" aria-hidden="true">
+        <svg viewBox="0 0 1200 32" fill="none" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="0" y1="16" x2="510" y2="16" stroke="#00e676" stroke-width="0.8"/>
+            <circle cx="516" cy="16" r="4" stroke="#00e676" stroke-width="1" fill="#060d06"/>
+            <polyline points="528,16 533,7 538,25 543,7 548,25 553,16" stroke="#00e676" stroke-width="1.2" fill="none"/>
+            <circle cx="564" cy="16" r="4" stroke="#00e676" stroke-width="1" fill="#060d06"/>
+            <line x1="90" y1="16" x2="510" y2="16" stroke="#00e676" stroke-width="0.8"/>
+            <line x1="570" y1="16" x2="1200" y2="16" stroke="#00e676" stroke-width="0.8"/>
+        </svg>
+    </div>
+
     <!-- About Section -->
     <section id="about" class="reveal">
         <div class="container">
@@ -114,23 +147,23 @@
             <div class="about-card">
                 <div class="about-text">
                     <p class="about-lead">I design and build firmware for medical-grade wearable devices — from
-                        bare-metal sensor drivers to production BLE protocols.</p>
-                    <p>With hands-on experience across <strong>nRF52/54</strong>, <strong>STM32</strong>, and
-                        <strong>ESP32</strong> platforms, I specialize in integrating complex analog front-ends like the
-                        <strong>MAX30001</strong> (ECG) and digital sensors like the <strong>LIS2DUX12</strong>
-                        (accelerometer) into reliable, low-power embedded systems. My work spans the full stack — from
-                        schematic review and flex PCB bring-up to Zephyr RTOS threading, BLE GATT service optimization,
-                        and deploying TensorFlow Lite ML models directly on microcontrollers for real-time blood
-                        pressure estimation.
+                        OLED display drivers and capacitive-touch HMI layers to bare-metal sensor drivers and production BLE protocols.</p>
+                    <p>With hands-on experience across <strong>nRF54L15</strong>, <strong>STM32</strong>, and
+                        <strong>ESP32</strong> platforms, I specialize in the full embedded stack — HMI development
+                        (<strong>SSD1315 OLED</strong>, capacitive-touch input), analog front-end integration
+                        (<strong>ECG via MAX30001</strong>, SpO₂, respiration sensing), and wireless connectivity
+                        (<strong>BLE GATT</strong>, Wi-Fi, OTA/DFU). My work spans schematic design and flex PCB
+                        bring-up to Zephyr RTOS threading and deploying <strong>TensorFlow Lite</strong> models
+                        on-device for real-time BP estimation.
                     </p>
                     <p>I've debugged NFC pin locks at the register level, streamed 7 BLE devices concurrently through
-                        a custom gateway, validated BP algorithms against patient monitors, and
-                        migrated firmware across three generations of Nordic SoCs. I thrive at the intersection of
+                        a custom gateway, validated BP algorithms against patient monitors, and designed the firmware
+                        architecture for three distinct medical wearable platforms. I thrive at the intersection of
                         hardware debugging and firmware architecture.</p>
                     <div class="about-highlights">
                         <div class="about-stat">
-                            <span class="stat-number">180+</span>
-                            <span class="stat-label">Engineering Tasks Completed</span>
+                            <span class="stat-number">2</span>
+                            <span class="stat-label">Research Publications</span>
                         </div>
                         <div class="about-stat">
                             <span class="stat-number">4</span>
@@ -146,6 +179,18 @@
         </div>
     </section>
 
+    <!-- Circuit Divider -->
+    <div class="circuit-divider" aria-hidden="true">
+        <svg viewBox="0 0 1200 32" fill="none" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="0" y1="16" x2="490" y2="16" stroke="#ffd54f" stroke-width="0.8"/>
+            <circle cx="496" cy="16" r="4" stroke="#ffd54f" stroke-width="1" fill="#0a120a"/>
+            <line x1="496" y1="6" x2="496" y2="26" stroke="#ffd54f" stroke-width="1.2"/>
+            <line x1="503" y1="9" x2="503" y2="23" stroke="#ffd54f" stroke-width="1.2"/>
+            <circle cx="510" cy="16" r="4" stroke="#ffd54f" stroke-width="1" fill="#0a120a"/>
+            <line x1="516" y1="16" x2="1200" y2="16" stroke="#ffd54f" stroke-width="0.8"/>
+        </svg>
+    </div>
+
     <!-- Technical Arsenal -->
     <section id="skills" class="reveal">
         <div class="container">
@@ -155,57 +200,68 @@
                 <article class="skill-category">
                     <h3><i class="fas fa-microchip"></i> Firmware & RTOS</h3>
                     <div class="skill-list">
-                        <span class="skill-item">C / Embedded C</span>
+                        <span class="skill-item">Embedded C / C</span>
                         <span class="skill-item">Python</span>
                         <span class="skill-item">Zephyr RTOS</span>
                         <span class="skill-item">ARM Cortex-M</span>
                         <span class="skill-item">CMSIS-DSP</span>
-                        <span class="skill-item">Threading & Mutex</span>
+                        <span class="skill-item">OTA / DFU</span>
                         <span class="skill-item">TensorFlow Lite Micro</span>
                     </div>
                 </article>
 
-                <!-- Platforms & Sensors -->
+                <!-- HMI & Visualization -->
                 <article class="skill-category">
-                    <h3><i class="fas fa-memory"></i> Platforms & Sensors</h3>
+                    <h3><i class="fas fa-desktop"></i> HMI & Visualization</h3>
                     <div class="skill-list">
-                        <span class="skill-item">nRF52 / nRF54</span>
+                        <span class="skill-item">SSD1315 OLED Driver</span>
+                        <span class="skill-item">Capacitive Touch Input</span>
+                        <span class="skill-item">Real-time Data Viz</span>
+                        <span class="skill-item">Python / Flask</span>
+                        <span class="skill-item">Signal Processing</span>
+                        <span class="skill-item">LabVIEW</span>
+                    </div>
+                </article>
+
+                <!-- Platforms & Connectivity -->
+                <article class="skill-category">
+                    <h3><i class="fas fa-broadcast-tower"></i> Platforms & Connectivity</h3>
+                    <div class="skill-list">
+                        <span class="skill-item">nRF54L15 / nRF52</span>
                         <span class="skill-item">STM32 (WB, L4)</span>
-                        <span class="skill-item">ESP32-S3</span>
-                        <span class="skill-item">MAX30001 (ECG/BioZ)</span>
-                        <span class="skill-item">LIS2DUX12 (Accel)</span>
-                        <span class="skill-item">SPI / I2C / UART</span>
-                    </div>
-                </article>
-
-                <!-- Communication & IoT -->
-                <article class="skill-category">
-                    <h3><i class="fas fa-broadcast-tower"></i> Communication & IoT</h3>
-                    <div class="skill-list">
+                        <span class="skill-item">ESP32 / ESP32-S3</span>
                         <span class="skill-item">BLE GATT / L2CAP</span>
-                        <span class="skill-item">MQTT</span>
-                        <span class="skill-item">Flask / REST API</span>
-                        <span class="skill-item">Docker</span>
-                        <span class="skill-item">ThingsBoard</span>
-                        <span class="skill-item">CRC8 Protocols</span>
+                        <span class="skill-item">Wi-Fi / MQTT</span>
+                        <span class="skill-item">SPI / I²C / UART</span>
                     </div>
                 </article>
 
-                <!-- Hardware Design & Tools -->
+                <!-- Hardware & Tools -->
                 <article class="skill-category">
                     <h3><i class="fas fa-bezier-curve"></i> Hardware & Tools</h3>
                     <div class="skill-list">
                         <span class="skill-item">Altium Designer</span>
-                        <span class="skill-item">Flex PCB Design</span>
-                        <span class="skill-item">Oscilloscopes</span>
-                        <span class="skill-item">Logic Analyzers</span>
+                        <span class="skill-item">Schematic Design</span>
+                        <span class="skill-item">PCB / Flex PCB</span>
+                        <span class="skill-item">AFE Integration</span>
                         <span class="skill-item">J-Link / SWD</span>
-                        <span class="skill-item">Git</span>
+                        <span class="skill-item">MATLAB / Simulink</span>
                     </div>
                 </article>
             </div>
         </div>
     </section>
+
+    <!-- Circuit Divider -->
+    <div class="circuit-divider" aria-hidden="true">
+        <svg viewBox="0 0 1200 32" fill="none" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="0" y1="16" x2="505" y2="16" stroke="#00e676" stroke-width="0.8"/>
+            <circle cx="511" cy="16" r="4" stroke="#00e676" stroke-width="1" fill="#060d06"/>
+            <polyline points="523,16 528,7 533,25 538,7 543,25 548,16" stroke="#00e676" stroke-width="1.2" fill="none"/>
+            <circle cx="560" cy="16" r="4" stroke="#00e676" stroke-width="1" fill="#060d06"/>
+            <line x1="566" y1="16" x2="1200" y2="16" stroke="#00e676" stroke-width="0.8"/>
+        </svg>
+    </div>
 
     <!-- Projects -->
     <section id="projects" class="reveal">
@@ -291,9 +347,41 @@
                         </div>
                     </div>
                 </article>
+
+                <!-- Battery Management System -->
+                <article class="project-card" data-project="BMS">
+                    <div class="project-img-wrapper">
+                        <img src="project_bms.png"
+                            alt="Battery Management System with IoT dashboard showing real-time SOC/SOH estimation and fault detection"
+                            loading="lazy">
+                    </div>
+                    <div class="project-info">
+                        <h3>Battery Management System</h3>
+                        <p>Real-time BMS with SOC/SOH estimation, ML-based fault prediction, and IoT remote-monitoring
+                            dashboards on ESP32.</p>
+                        <div class="tech-stack">
+                            <span class="tech-badge">ESP32</span>
+                            <span class="tech-badge">C</span>
+                            <span class="tech-badge">ML</span>
+                            <span class="tech-badge">IoT</span>
+                        </div>
+                    </div>
+                </article>
             </div>
         </div>
     </section>
+
+    <!-- Circuit Divider -->
+    <div class="circuit-divider" aria-hidden="true">
+        <svg viewBox="0 0 1200 32" fill="none" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="0" y1="16" x2="490" y2="16" stroke="#ffd54f" stroke-width="0.8"/>
+            <circle cx="496" cy="16" r="4" stroke="#ffd54f" stroke-width="1" fill="#0a120a"/>
+            <line x1="496" y1="6" x2="496" y2="26" stroke="#ffd54f" stroke-width="1.2"/>
+            <line x1="503" y1="9" x2="503" y2="23" stroke="#ffd54f" stroke-width="1.2"/>
+            <circle cx="510" cy="16" r="4" stroke="#ffd54f" stroke-width="1" fill="#0a120a"/>
+            <line x1="516" y1="16" x2="1200" y2="16" stroke="#ffd54f" stroke-width="0.8"/>
+        </svg>
+    </div>
 
     <!-- Timeline -->
     <section id="timeline" class="reveal">
@@ -302,28 +390,82 @@
             <div class="timeline-container">
                 <div class="timeline-item left">
                     <div class="timeline-content">
-                        <div class="timeline-date">2025 – Present</div>
-                        <h3>Embedded Systems Engineer</h3>
-                        <p class="timeline-company">Lifesigns Technologies</p>
-                        <p>Developing firmware for medical wearable devices — ECG patches, smartwatches, and BLE
-                            gateways. Integrating MAX30001, LIS2DUX12 sensors with nRF52/54 and STM32 platforms.
-                            Deployed ML models on-device for BP estimation. Designed BLE protocols, multi-device
-                            streaming gateways, and production-grade firmware with Zephyr RTOS.</p>
+                        <div class="timeline-date">June 2025 – Present</div>
+                        <h3>Product Development Engineer</h3>
+                        <p class="timeline-company">Lifesigns, Chennai</p>
+                        <p>Building firmware for medical wearables — OLED display drivers (SSD1315), capacitive-touch
+                            HMI, ECG / SpO₂ / respiration sensing, BLE streaming, and OTA/DFU updates on nRF54L15
+                            and STM32 platforms. Deployed TensorFlow Lite for on-device BP estimation. Designed and
+                            shipped a 7-device concurrent BLE gateway system.</p>
                     </div>
                 </div>
                 <div class="timeline-item right">
                     <div class="timeline-content">
-                        <div class="timeline-date">2019 – 2025</div>
-                        <h3>B.Tech — Electronics & Communication</h3>
-                        <p class="timeline-company">Amrita Vishwa Vidyapeetham</p>
-                        <p>Studied core electronics, embedded systems, VLSI design, and signal processing.
-                            Gained foundational experience in PCB design with Altium, microcontroller programming
-                            in C, and power electronics simulation with MATLAB/Simulink.</p>
+                        <div class="timeline-date">2023 – 2024</div>
+                        <h3>Industrial Internships</h3>
+                        <p class="timeline-company">Sunshiv Electronics · NSIC · Titan Co.</p>
+                        <p>PCB design at Sunshiv Electronics, Coimbatore (Jun 2024); embedded systems & IoT at NSIC,
+                            Chennai (May 2024); servo & PMDC motor systems at Titan Co., Hosur (Aug 2023).</p>
+                    </div>
+                </div>
+                <div class="timeline-item left">
+                    <div class="timeline-content">
+                        <div class="timeline-date">2021 – 2025</div>
+                        <h3>B.Tech — Electrical & Electronics Engineering</h3>
+                        <p class="timeline-company">Amrita Vishwa Vidyapeetham, Coimbatore</p>
+                        <p>CGPA: 7.62/10. Core focus: embedded systems, power electronics, VLSI design, and control
+                            systems. Hands-on experience in PCB design with Altium, microcontroller programming in C,
+                            MATLAB/Simulink simulation, and ANSYS MotorCAD. Certified Associate LabVIEW Developer.</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- Circuit Divider -->
+    <div class="circuit-divider" aria-hidden="true">
+        <svg viewBox="0 0 1200 32" fill="none" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="0" y1="16" x2="505" y2="16" stroke="#00e676" stroke-width="0.8"/>
+            <circle cx="511" cy="16" r="4" stroke="#00e676" stroke-width="1" fill="#060d06"/>
+            <polyline points="523,16 528,7 533,25 538,7 543,25 548,16" stroke="#00e676" stroke-width="1.2" fill="none"/>
+            <circle cx="560" cy="16" r="4" stroke="#00e676" stroke-width="1" fill="#060d06"/>
+            <line x1="566" y1="16" x2="1200" y2="16" stroke="#00e676" stroke-width="0.8"/>
+        </svg>
+    </div>
+
+    <!-- Publications -->
+    <section id="publications" class="reveal">
+        <div class="container">
+            <h2 class="section-title">Publications</h2>
+            <div class="publications-list">
+                <article class="pub-card">
+                    <div class="pub-venue">ICFCR 2024</div>
+                    <h3>Optimal Generation Scheduling in a Microgrid Using Stochastic Optimization Techniques</h3>
+                    <p>Compared Particle Swarm Optimization and Fuzzy Logic for microgrid generation scheduling,
+                        demonstrating improved real-time load balancing, reduced grid reliance, and better
+                        renewable energy utilization.</p>
+                </article>
+                <article class="pub-card">
+                    <div class="pub-venue">ELGi Technology Day</div>
+                    <h3>Development of a 5 kW/kg High-Power-Density PMSM for Scroll Compressors</h3>
+                    <p>Designed a high-power-density PMSM using advanced magnets, optimized rotor geometry, and
+                        tailored cooling solutions for electric-mobility auxiliary systems.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Circuit Divider -->
+    <div class="circuit-divider" aria-hidden="true">
+        <svg viewBox="0 0 1200 32" fill="none" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="0" y1="16" x2="490" y2="16" stroke="#ffd54f" stroke-width="0.8"/>
+            <circle cx="496" cy="16" r="4" stroke="#ffd54f" stroke-width="1" fill="#0a120a"/>
+            <line x1="496" y1="6" x2="496" y2="26" stroke="#ffd54f" stroke-width="1.2"/>
+            <line x1="503" y1="9" x2="503" y2="23" stroke="#ffd54f" stroke-width="1.2"/>
+            <circle cx="510" cy="16" r="4" stroke="#ffd54f" stroke-width="1" fill="#0a120a"/>
+            <line x1="516" y1="16" x2="1200" y2="16" stroke="#ffd54f" stroke-width="0.8"/>
+        </svg>
+    </div>
 
     <!-- Contact -->
     <section id="contact" class="reveal">
@@ -367,8 +509,12 @@
 
                 <div class="contact-info">
                     <h3>Let's Connect</h3>
+                    <p style="color:var(--text-secondary); margin-bottom: 0.6rem;">
+                        <i class="fas fa-map-marker-alt" style="color:var(--accent-green); margin-right: 6px;"></i>
+                        Chennai, Tamil Nadu, India
+                    </p>
                     <p style="color:var(--text-secondary); margin-bottom: 1.5rem;">Open for collaborations in
-                        Embedded Systems, Medical Devices, and IoT firmware development.</p>
+                        Embedded Firmware, Medical Devices, and IoT systems development.</p>
                     <div class="social-links">
                         <a href="#" class="social-icon" aria-label="GitHub profile"><i class="fab fa-github"></i></a>
                         <a href="https://www.linkedin.com/in/vishveshwaran-m-16b6b6221" target="_blank"
